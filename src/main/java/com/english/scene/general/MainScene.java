@@ -54,11 +54,6 @@ public class MainScene extends AbstractScene {
     private TabPane tabPane;
     private EventHandler<Event> gameEventHandler;
     private EventHandler<Event> inputFileHandler;
-
-    {
-        this.sceneName = "主场景";
-    }
-
     @Override
     public void initScene() {
         super.initScene();
@@ -83,11 +78,11 @@ public class MainScene extends AbstractScene {
         completeWordByFillGameButton = new MenuItem("单词补全竞赛");
         selectMeanByWordGameButton = new MenuItem("单词选义竞赛");
 
-
         saveFunction = new Menu("导入数据");
         inputButton = new MenuItem("导入");
         inputDictionaryFileButton = new MenuItem("导入词典");
-        inputCorpusFileButton = new MenuItem("导入语料");
+        inputCorpusFileButton = new MenuItem("导入文集");
+
         tabPane = new TabPane();
 
         functionBar.setStyle("-fx-background-color: #93dc49");
@@ -98,8 +93,8 @@ public class MainScene extends AbstractScene {
         saveFunction.getItems().addAll(inputButton, inputDictionaryFileButton, inputCorpusFileButton);
         functionMenu.getItems().addAll(wordFunction, sentenceFunction, gameFunction, saveFunction);
 
-        addHBoxMain();
-        hBoxMain.getChildren().addAll(search, searchButton, functionBar);
+        addSceneHBox();
+        sceneHBox.getChildren().addAll(search, searchButton, functionBar);
 
         tabPane.setPrefWidth(371);
         tabPane.setPrefHeight(288);
@@ -107,13 +102,13 @@ public class MainScene extends AbstractScene {
         tabPane.setBorder(new Border(new BorderStroke(Paint.valueOf("384A98FF"), BorderStrokeStyle.DASHED, new CornerRadii(10), new BorderWidths(2))));
 
         anchorPane.getChildren().add(tabPane);
-        AnchorPane.setTopAnchor(hBoxMain, 16.0);
-        AnchorPane.setLeftAnchor(hBoxMain, 76.0);
+        AnchorPane.setTopAnchor(sceneHBox, 16.0);
+        AnchorPane.setLeftAnchor(sceneHBox, 76.0);
         AnchorPane.setTopAnchor(tabPane, 56.0);
     }
 
     public void initData() {
-        dictionaryList = dictionaryService.queryRandomAddCorpus(6);
+        dictionaryList = DICTIONARY_SERVICE.queryRandomAddCorpus(6);
         tabPane.getTabs().clear();
         tabPane.getTabs().addAll(addTab());
     }
@@ -148,13 +143,13 @@ public class MainScene extends AbstractScene {
                 VBox vBox = new VBox(16);
                 vBox.getChildren().addAll(inputCount, selectTimeBox);
 
-                getDialog("竞赛", 266, 166);
-                dialog.setGraphic(vBox);
-                dialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                addMainDialog("竞赛", 266, 166);
+                mainDialog.setGraphic(vBox);
+                mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
                     public void handle(DialogEvent dialogEvent) {
-                        System.out.println(dialog.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE);
-                        if (dialog.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                        //System.out.println(mainDialog.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE);
+                        if (mainDialog.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
                             String count = inputCount.getText();
                             if (!count.matches("([1-9]{1}[\\d]*)$")) {
                                 return;
@@ -162,15 +157,15 @@ public class MainScene extends AbstractScene {
                             dataSize = Integer.parseInt(count);
                             Integer gameDuration = selectTimeBox.getValue() * 60;
                             if (eventTarget.getSource() == completeWordByFillGameButton) {
-                                EnglishAppStart.convertScene("单词补全竞赛场景", gameDuration);
+                                EnglishAppStart.convertScene("CompleteWordByFillGameScene", gameDuration);
                             } else if (eventTarget.getSource() == selectMeanByWordGameButton) {
-                                EnglishAppStart.convertScene("单词选义竞赛场景", gameDuration);
+                                EnglishAppStart.convertScene("SelectMeanByWordGameScene", gameDuration);
                             }
                         }
-                        dialog.setGraphic(null);
+                        mainDialog.setGraphic(null);
                     }
                 });
-                dialog.show();
+                mainDialog.show();
             }
         };
         completeWordByFillGameEvent();
@@ -187,9 +182,9 @@ public class MainScene extends AbstractScene {
                 File file = fileChooser.showOpenDialog(stage);
                 if (file != null) {
                     if (event.getSource() == inputDictionaryFileButton) {
-                        dictionaryService.saveByFile(file.getAbsolutePath());
+                        DICTIONARY_SERVICE.saveByFile(file.getAbsolutePath());
                     } else if (event.getSource() == inputCorpusFileButton) {
-                        corpusService.saveByFile(file.getAbsolutePath());
+                        CORPUS_SERVICE.saveByFile(file.getAbsolutePath());
                     }
                 }
             }
@@ -217,13 +212,13 @@ public class MainScene extends AbstractScene {
                     dictionaryList.clear();
                     Corpus corpus = null;
                     if (content.matches(zhRegex)) {
-                        dictionaryList.addAll(dictionaryService.translate(content, "zh", "en"));
+                        dictionaryList.addAll(DICTIONARY_SERVICE.translate(content, "zh", "en"));
                     } else if (content.matches(enRegex)) {
-                        dictionaryList.addAll(dictionaryService.translate(content, "en", "zh"));
+                        dictionaryList.addAll(DICTIONARY_SERVICE.translate(content, "en", "zh"));
                     } else if (content.matches(zhTextRegex)) {
-                        corpus = corpusService.translate(content, "zh", "en");
+                        corpus = CORPUS_SERVICE.translate(content, "zh", "en");
                     } else if (content.matches(enTextRegex)) {
-                        corpus = corpusService.translate(content, "en", "zh");
+                        corpus = CORPUS_SERVICE.translate(content, "en", "zh");
                     }
                     if (dictionaryList.size() > 0) {
                         tabPane.getTabs().clear();
@@ -248,25 +243,25 @@ public class MainScene extends AbstractScene {
         wordReciteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                getDialog("背词", 266, 166);
+                addMainDialog("背词", 266, 166);
                 TextField inputNumber = new TextField();
                 inputNumber.setPrefWidth(88);
                 inputNumber.setPromptText("计划词数");
-                dialog.setGraphic(inputNumber);
-                dialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                mainDialog.setGraphic(inputNumber);
+                mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
                     public void handle(DialogEvent event) {
-                        if (dialog.getResult().getButtonData().isDefaultButton()) {
+                        if (mainDialog.getResult().getButtonData().isDefaultButton()) {
                             String numberText = inputNumber.getText();
-                            if (numberText.matches("[\\d]+") || "0".equals(numberText)) {
+                            if (numberText.matches("\\d+") || "0".equals(numberText)) {
                                 dataSize = Integer.parseInt(numberText);
-                                EnglishAppStart.convertScene("背词场景");
+                                EnglishAppStart.convertScene("WordReciteScene");
                             }
                         }
-                        dialog.setGraphic(null);
+                        mainDialog.setGraphic(null);
                     }
                 });
-                dialog.show();
+                mainDialog.show();
             }
         });
     }
@@ -278,7 +273,7 @@ public class MainScene extends AbstractScene {
         wordBrowseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("单词浏览场景");
+                EnglishAppStart.convertScene("WordBrowseScene");
             }
         });
     }
@@ -290,7 +285,7 @@ public class MainScene extends AbstractScene {
         completeWordByFillButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("单词补全场景");
+                EnglishAppStart.convertScene("CompleteWordByFillScene");
             }
         });
     }
@@ -300,7 +295,7 @@ public class MainScene extends AbstractScene {
      */
     public void readSentenceFillWordEvent() {
         readSentenceFillWordButton.setOnAction((event) -> {
-            EnglishAppStart.convertScene("读句填词场景");
+            EnglishAppStart.convertScene("ReadSentenceFillWordScene");
         });
     }
 
@@ -327,7 +322,7 @@ public class MainScene extends AbstractScene {
         sentenceWriteFromMemory.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("语句默写场景");
+                EnglishAppStart.convertScene("SentenceWriteFromMemoryScene");
             }
         });
     }
@@ -368,13 +363,13 @@ public class MainScene extends AbstractScene {
                 gridPane.add(zhText, 1, 6);
                 gridPane.add(inputZhText, 2, 6);
 
-                getDialog("导入数据", 866, 258);
-                dialog.setGraphic(gridPane);
-                dialog.show();
-                dialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                addMainDialog("导入数据", 866, 258);
+                mainDialog.setGraphic(gridPane);
+                mainDialog.show();
+                mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
                     public void handle(DialogEvent event) {
-                        if (dialog.getResult().getButtonData().isDefaultButton()) {
+                        if (mainDialog.getResult().getButtonData().isDefaultButton()) {
                             String zhRegex = "[\u4e00-\u9fa5]+";
                             String zhTextRegex = "[\u4e00-\u9fa5\\w\\pP]+";
                             String enRegex = "[a-zA-Z]+";
@@ -384,13 +379,13 @@ public class MainScene extends AbstractScene {
                             String zhText = inputZhText.getText();
                             String enText = inputEnText.getText();
                             if (StringUtils.hasText(en) && en.matches(enRegex) && StringUtils.hasText(zh) && zh.matches(zhRegex)) {
-                                dictionaryService.save(new Dictionary(en, zh));
+                                DICTIONARY_SERVICE.save(new Dictionary(en, zh));
                                 if (StringUtils.hasText(zhText) && enText.matches(enTextRegex) && StringUtils.hasText(enText) && zhText.matches(zhTextRegex)) {
-                                    corpusService.save(new Corpus(en, enText, zhText));
+                                    CORPUS_SERVICE.save(new Corpus(en, enText, zhText));
                                 }
                             }
                         }
-                        dialog.setGraphic(null);
+                        mainDialog.setGraphic(null);
                         releaseNode();
                     }
                 });

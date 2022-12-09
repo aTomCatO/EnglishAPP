@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
  */
 
 @AllArgsConstructor
-public class TimedCloseDialogScheduledService extends Service<Boolean> {
+public class TimedCloseDialogService extends Service<Boolean> {
     private final Dialog<ButtonType> dialog;
 
     @Override
@@ -28,7 +28,6 @@ public class TimedCloseDialogScheduledService extends Service<Boolean> {
             @Override
             protected void updateValue(Boolean open) {
                 dialog.close();
-                super.updateValue(open);
             }
         };
     }

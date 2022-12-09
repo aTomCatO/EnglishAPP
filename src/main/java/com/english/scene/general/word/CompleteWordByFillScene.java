@@ -35,10 +35,6 @@ public class CompleteWordByFillScene extends AbstractScene {
 
     public char[] fillChars;
 
-    {
-        this.sceneName = "单词补全场景";
-    }
-
     @Override
     public void initScene() {
         super.initScene();
@@ -51,19 +47,19 @@ public class CompleteWordByFillScene extends AbstractScene {
         enPreviousLabel.setFont(Font.font(18));
         zhCurrentLabel.setFont(Font.font(18));
 
-        addHBoxMain();
-        addVBoxMain();
+        addSceneHBox();
+        addSceneVBox();
         addExitButton();
         addNextButton();
 
-        hBoxMain.getChildren().add(enCurrentTextFlow);
-        vBoxMain.getChildren().addAll(enPreviousLabel, hBoxMain, zhCurrentLabel);
+        sceneHBox.getChildren().add(enCurrentTextFlow);
+        sceneVBox.getChildren().addAll(enPreviousLabel, sceneHBox, zhCurrentLabel);
     }
 
     @Override
     public void initData() {
         dataSize = 20;
-        dictionaryList = dictionaryService.queryRandom(dataSize);
+        dictionaryList = DICTIONARY_SERVICE.queryRandom(dataSize);
         dataIndex = RANDOM.nextInt(dataSize);
         fillImplement();
         zhCurrentLabel.setText(dictionaryList.get(dataIndex).getZh());
@@ -83,7 +79,7 @@ public class CompleteWordByFillScene extends AbstractScene {
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
                 releaseNode();
-                EnglishAppStart.convertScene("主场景");
+                EnglishAppStart.convertScene("MainScene");
             }
         });
     }
@@ -146,7 +142,6 @@ public class CompleteWordByFillScene extends AbstractScene {
 
                 TextField inputChar = getTextField(textFieldIndex, 32);
 
-
                 enCurrentTextFlow.getChildren().add(inputChar);
                 this.fillChars[textFieldIndex++] = enChars[i];
             } else {
@@ -192,7 +187,7 @@ public class CompleteWordByFillScene extends AbstractScene {
             textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    System.out.println(event.getCode().getName());
+                    //System.out.println(event.getCode().getName());
                     switch (event.getCode().getName()) {
                         case "Left": {
                             //如果当前焦点在第一个输入框,键盘点击向左箭头 ⬅ ,焦点就会给到最后一个输入框

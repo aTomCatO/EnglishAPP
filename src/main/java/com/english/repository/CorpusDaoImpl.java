@@ -14,11 +14,8 @@ import java.util.List;
 public class CorpusDaoImpl extends AbstractDao<Corpus> implements CorpusDao {
     public static final CorpusDao CORPUS_DAO = new CorpusDaoImpl();
 
-    {
-        this.tableName = "corpus";
-    }
-
     private CorpusDaoImpl() {
+
     }
 
     @Override

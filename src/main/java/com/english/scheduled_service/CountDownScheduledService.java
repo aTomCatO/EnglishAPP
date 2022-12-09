@@ -12,23 +12,25 @@ import lombok.Data;
  * 竞赛场景倒计时
  */
 @Data
-public class GameCountDownScheduledService extends ScheduledService<Integer> {
+public class CountDownScheduledService extends ScheduledService<Integer> {
 
-    private static GameCountDownScheduledService scheduledService;
+    private static CountDownScheduledService scheduledService;
     private Integer remainTime;
     private Label countDownLabel;
 
+    private CountDownSupport countDownSupport;
 
-    private GameCountDownScheduledService() {
+
+    private CountDownScheduledService() {
         this.countDownLabel = new Label();
         countDownLabel.setFont(Font.font(13));
         setPeriod(Duration.seconds(1));
     }
 
 
-    public static GameCountDownScheduledService getScheduledService() {
+    public static CountDownScheduledService getScheduledService() {
         if (scheduledService == null) {
-            scheduledService = new GameCountDownScheduledService();
+            scheduledService = new CountDownScheduledService();
         }
         return scheduledService;
     }
@@ -47,9 +49,16 @@ public class GameCountDownScheduledService extends ScheduledService<Integer> {
                 if (value >= 0) {
                     countDownLabel.setText(value.toString());
                 } else {
-
+                    countDownSupport.countDownEnd();
                 }
             }
         };
+    }
+
+    public interface CountDownSupport {
+        /**
+         * 倒计时结束
+         */
+        void countDownEnd();
     }
 }

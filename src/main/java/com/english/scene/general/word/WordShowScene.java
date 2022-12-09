@@ -15,10 +15,6 @@ public class WordShowScene extends AbstractScene {
     private ListView<String> enListView;
     private ListView<String> zhListView;
 
-    {
-        this.sceneName = "单词展示场景";
-    }
-
     @Override
     public void initScene() {
         super.initScene();
@@ -57,7 +53,7 @@ public class WordShowScene extends AbstractScene {
             enListView.getItems().clear();
             zhListView.getItems().clear();
             releaseNode();
-            EnglishAppStart.convertScene("主场景");
+            EnglishAppStart.convertScene("MainScene");
         });
     }
 }

@@ -29,7 +29,7 @@ public class WordBrowseScene extends AbstractScene {
                 protected Integer call() throws Exception {
                     if (dataIndex == dataSize - 1) {
                         dataIndex = 0;
-                        dictionaryList = dictionaryService.queryRandom(dataSize);
+                        dictionaryList = DICTIONARY_SERVICE.queryRandom(dataSize);
                     }
                     return dataIndex += 1;
                 }
@@ -44,10 +44,6 @@ public class WordBrowseScene extends AbstractScene {
             };
         }
     };
-
-    {
-        this.sceneName = "单词浏览场景";
-    }
 
     @Override
     public void initScene() {
@@ -64,8 +60,8 @@ public class WordBrowseScene extends AbstractScene {
 
         addExitButton();
         addNextButton();
-        addVBoxMain();
-        vBoxMain.getChildren().addAll(enPreviousLabel, enCurrentLabel, zhCurrentLabel);
+        addSceneVBox();
+        sceneVBox.getChildren().addAll(enPreviousLabel, enCurrentLabel, zhCurrentLabel);
 
     }
 
@@ -73,7 +69,7 @@ public class WordBrowseScene extends AbstractScene {
     public void initData() {
         dataSize = 30;
         dataIndex = 0;
-        dictionaryList = dictionaryService.queryRandom(dataSize);
+        dictionaryList = DICTIONARY_SERVICE.queryRandom(dataSize);
 
         enCurrentLabel.setText(dictionaryList.get(dataIndex).getEn());
         zhCurrentLabel.setText(dictionaryList.get(dataIndex).getZh());
@@ -92,7 +88,7 @@ public class WordBrowseScene extends AbstractScene {
             public void handle(ActionEvent event) {
                 scheduledService.cancel();
                 scheduledService.reset();
-                EnglishAppStart.convertScene("主场景");
+                EnglishAppStart.convertScene("MainScene");
             }
         });
     }
@@ -102,6 +98,7 @@ public class WordBrowseScene extends AbstractScene {
         scheduledService.setDelay(Duration.seconds(6));
         scheduledService.setPeriod(Duration.seconds(6));
         scheduledService.start();
-        return super.run();
+        initData();
+        return scene;
     }
 }

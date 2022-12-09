@@ -61,9 +61,6 @@ public abstract class AbstractDao<T> implements BaseDao<T> {
             System.out.println("[ERROR]: " + e.getMessage());
         }
     }
-
-    protected String tableName;
-
     @Override
     public void insert(String sql) {
         try {

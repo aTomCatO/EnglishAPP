@@ -27,10 +27,6 @@ public class WordReciteScene extends AbstractScene {
     private Label enCurrentLabel;
     private Label zhLabel;
 
-    {
-        this.sceneName = "背词场景";
-    }
-
     public void initScene() {
         super.initScene();
 
@@ -47,30 +43,34 @@ public class WordReciteScene extends AbstractScene {
         enCurrentLabel.setFont(Font.font(28));
         zhLabel.setFont(Font.font(16));
 
-        addVBoxMain();
+        addSceneVBox();
         addExitButton();
         addNextButton();
 
 
-        vBoxMain.getChildren().addAll(enPreviousLabel, enCurrentLabel, zhLabel, listView);
+        sceneVBox.getChildren().addAll(enPreviousLabel, enCurrentLabel, zhLabel, listView);
     }
 
     @Override
     public void initData() {
-        dictionaryList = dictionaryService.queryRandomAddCorpus(dataSize);
+        dictionaryList = DICTIONARY_SERVICE.queryRandomAddCorpus(dataSize);
         dataIndex = 0;
         Dictionary dictionary = dictionaryList.get(dataIndex);
         enCurrentLabel.setText(dictionary.getEn());
         zhLabel.setText(dictionary.getZh());
-        listView.getItems().addAll(dictionary.getCorpusList());
+
+        List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
+        if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
+            listView.getItems().addAll(dictionaryCorpusList);
+        }
 
     }
 
 
     @Override
     public void bindEvent() {
+        exitButtonEvent();
         nextButtonEvent();
-
     }
 
     public void nextButtonEvent() {
@@ -84,7 +84,10 @@ public class WordReciteScene extends AbstractScene {
                     Dictionary dictionary = dictionaryList.get(dataIndex);
                     enCurrentLabel.setText(dictionary.getEn());
                     zhLabel.setText(dictionary.getZh());
-                    listView.getItems().addAll(dictionary.getCorpusList());
+                    List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
+                    if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
+                        listView.getItems().addAll(dictionaryCorpusList);
+                    }
                 } else {
                     List<String> items = new ArrayList<>();
                     items.add("退出");
@@ -93,20 +96,20 @@ public class WordReciteScene extends AbstractScene {
                     ChoiceBox<String> choiceBox = new ChoiceBox<>();
                     choiceBox.setValue("退出");
                     choiceBox.getItems().addAll(items);
-                    dialog.setTitle("计划完成");
-                    dialog.setGraphic(choiceBox);
-                    dialog.show();
-                    dialog.setWidth(266);
-                    dialog.setHeight(166);
-                    dialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                    mainDialog.setTitle("计划完成");
+                    mainDialog.setGraphic(choiceBox);
+                    mainDialog.show();
+                    mainDialog.setWidth(266);
+                    mainDialog.setHeight(166);
+                    mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
                         @Override
                         public void handle(DialogEvent event) {
-                            if (dialog.getResult().getButtonData().isDefaultButton()) {
+                            if (mainDialog.getResult().getButtonData().isDefaultButton()) {
                                 String selectedItem = choiceBox.getValue();
                                 switch (selectedItem) {
                                     case "单词补全": {
                                         dataIndex = 0;
-                                        EnglishAppStart.convertScene("单词补全场景");
+                                        EnglishAppStart.convertScene("CompleteWordByFillScene");
                                         break;
                                     }
                                     case "重新背词": {
@@ -114,12 +117,12 @@ public class WordReciteScene extends AbstractScene {
                                         break;
                                     }
                                     default: {
-                                        EnglishAppStart.convertScene("主场景");
+                                        EnglishAppStart.convertScene("MainScene");
                                         break;
                                     }
                                 }
                             }
-                            dialog.setGraphic(null);
+                            mainDialog.setGraphic(null);
                         }
                     });
                 }

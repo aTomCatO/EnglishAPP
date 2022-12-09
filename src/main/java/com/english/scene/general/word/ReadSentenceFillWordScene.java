@@ -22,11 +22,6 @@ public class ReadSentenceFillWordScene extends AbstractScene {
     private Label zhTextLabel;
 
     private TextFlow enCurrentTextFlow;
-
-    {
-        this.sceneName = "读句填词场景";
-    }
-
     @Override
     public void initScene() {
         super.initScene();
@@ -36,21 +31,21 @@ public class ReadSentenceFillWordScene extends AbstractScene {
         zhTextLabel = new Label();
         enCurrentTextFlow = new TextFlow();
 
-        addVBoxMain();
+        addSceneVBox();
         addExitButton();
         addNextButton();
 
         enLabel.setFont(Font.font(16));
         zhTextLabel.setFont(Font.font(16));
 
-        vBoxMain.getChildren().addAll(enLabel, enCurrentTextFlow, zhTextLabel);
+        sceneVBox.getChildren().addAll(enLabel, enCurrentTextFlow, zhTextLabel);
     }
 
     public void initData() {
         dataSize = 20;
         dataIndex = 0;
         corpusList.clear();
-        corpusList.addAll(corpusService.queryRandom(dataSize));
+        corpusList.addAll(CORPUS_SERVICE.queryRandom(dataSize));
 
         zhTextLabel.setText(corpusList.get(dataIndex).getZhText());
         nextCorpus();
@@ -70,7 +65,7 @@ public class ReadSentenceFillWordScene extends AbstractScene {
             public void handle(ActionEvent event) {
                 enCurrentTextFlow.getChildren().clear();
                 releaseNode();
-                EnglishAppStart.convertScene("主场景");
+                EnglishAppStart.convertScene("MainScene");
             }
         });
     }

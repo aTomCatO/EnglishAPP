@@ -2,7 +2,7 @@ package com.english.scene.general.sentence;
 
 import com.english.EnglishAppStart;
 import com.english.scene.AbstractScene;
-import com.english.scheduled_service.TimedCloseDialogScheduledService;
+import com.english.scheduled_service.TimedCloseDialogService;
 import javafx.concurrent.Service;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
  * 语句默写场景
  */
 public class SentenceWriteFromMemoryScene extends AbstractScene {
-    private Service<Boolean> scheduledService;
+    private Service<Boolean> service;
     private Label enTextLabel;
     private Label zhTextLabel;
     private TextArea inputTextArea;
@@ -31,15 +31,11 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
     private Dialog<ButtonType> questionDialog;
     private Label questionLabel;
 
-    {
-        this.sceneName = "语句默写场景";
-    }
-
     @Override
     public void initScene() {
         super.initScene();
 
-        addVBoxMain();
+        addSceneVBox();
         addExitButton();
         addNextButton();
 
@@ -67,7 +63,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
         AnchorPane.setTopAnchor(correctRateLabel, 8.8);
         AnchorPane.setRightAnchor(correctRateLabel, 8.8);
 
-        vBoxMain.getChildren().addAll(enTextLabel, inputTextArea, zhTextLabel);
+        sceneVBox.getChildren().addAll(enTextLabel, inputTextArea, zhTextLabel);
 
         //题目弹窗
         questionDialog = new Dialog<>();
@@ -75,8 +71,10 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
         questionDialog.setTitle("请看题");
         questionDialog.setWidth(366);
         questionDialog.setHeight(166);
+        //dialog弹窗至少需要添加一个按钮，否则将不能关闭
+        questionDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
 
-        scheduledService = new TimedCloseDialogScheduledService(questionDialog);
+        service = new TimedCloseDialogService(questionDialog);
     }
 
     @Override
@@ -85,7 +83,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
         dataIndex = 0;
         correctCount = 0;
         corpusList.clear();
-        corpusList.addAll(corpusService.queryRandom(dataSize));
+        corpusList.addAll(CORPUS_SERVICE.queryRandom(dataSize));
 
         updateQuestion();
     }
@@ -110,8 +108,8 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
                     return;
                 }
                 //分别从语句中匹配每一个词
-                Matcher matcherCorrectSentence = pattern.matcher(enSentence);
-                Matcher matcherInputSentence = pattern.matcher(inputText);
+                Matcher matcherCorrectSentence = PATTERN.matcher(enSentence);
+                Matcher matcherInputSentence = PATTERN.matcher(inputText);
                 while (matcherCorrectSentence.find()) {
                     wordCount++;
                     while (matcherInputSentence.find()) {
@@ -138,17 +136,16 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
                 correctCount = 0;
             }
         });
-
     }
 
     @Override
     public void exitButtonEvent() {
         exitButton.setOnAction(event -> {
-            scheduledService.cancel();
+            service.cancel();
 
             enTextLabel.setText(null);
 
-            EnglishAppStart.convertScene("主场景");
+            EnglishAppStart.convertScene("MainScene");
         });
     }
 
@@ -158,6 +155,6 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
         questionLabel.setText(corpusList.get(dataIndex).getEnText());
         zhTextLabel.setText(corpusList.get(dataIndex).getZhText());
         questionDialog.show();
-        scheduledService.restart();
+        service.restart();
     }
 }

@@ -1,8 +1,8 @@
 package com.english.scene.game;
 
 import com.english.EnglishAppStart;
-import com.english.scheduled_service.GameCountDownScheduledService;
-import javafx.concurrent.Service;
+import com.english.scheduled_service.CountDownScheduledService;
+import com.english.service.BaseService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,8 +20,6 @@ import java.util.concurrent.TimeUnit;
  * 单词选义竞赛场景
  */
 public class SelectMeanByWordGameScene extends AbstractGameScene {
-
-    private final Service<Object> service = new UpdateService();
     /**
      * 显示先前的单词的 Label
      */
@@ -44,20 +42,17 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
     private VBox vBox1;
     private VBox vBox2;
     private BorderPane borderPane;
+    private UpdateUI currentTask;
     private boolean doPressed = true;
-
-    {
-        this.sceneName = "单词选义竞赛场景";
-    }
 
     @Override
     public void initScene() {
         super.initScene();
 
         addExitButton();
-        addVBoxMain();
+        addSceneVBox();
 
-        gameCountDownScheduledService = GameCountDownScheduledService.getScheduledService();
+        gameCountDownScheduledService = CountDownScheduledService.getScheduledService();
 
         enPreviousLabel = new Label();
         enCurrentLabel = new Label();
@@ -67,7 +62,6 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         zhSelectLabel4 = new Label();
         countDownLabel = gameCountDownScheduledService.getCountDownLabel();
 
-        //countDownLabel.setFont(Font.font(13));
         this.anchorPane.getChildren().add(countDownLabel);
         AnchorPane.setTopAnchor(countDownLabel, 8.8);
         AnchorPane.setRightAnchor(countDownLabel, 8.8);
@@ -95,7 +89,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         borderPane.setLeft(vBox1);
         borderPane.setRight(vBox2);
 
-        vBoxMain.getChildren().addAll(enPreviousLabel, enCurrentLabel, borderPane);
+        sceneVBox.getChildren().addAll(enPreviousLabel, enCurrentLabel, borderPane);
     }
 
     @Override
@@ -103,7 +97,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         dataIndex = 0;
         correctCount = 0;
         dictionaryList.clear();
-        dictionaryList.addAll(dictionaryService.queryRandom(dataSize));
+        dictionaryList.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
         updateQuestion();
     }
 
@@ -177,13 +171,11 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                currentTask.cancel();
                 gameCountDownScheduledService.cancel();
-                //gameCountDownScheduledService.reset();
-
-
                 enPreviousLabel.setText(null);
                 releaseNode();
-                EnglishAppStart.convertScene("主场景");
+                EnglishAppStart.convertScene("MainScene");
             }
         });
     }
@@ -222,7 +214,8 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
                         return;
                     }
                 }
-                service.restart();
+                currentTask = new UpdateUI();
+                BaseService.THREAD_POOL.execute(currentTask);
             }
         });
     }
@@ -240,47 +233,43 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
     @Override
     public Scene run(Object... args) {
         this.gameDuration = (Integer) args[0];
-
         doPressed = true;
+        gameCountDownScheduledService.setCountDownSupport(this);
         gameCountDownScheduledService.setRemainTime(gameDuration);
         gameCountDownScheduledService.restart();
-        return super.run();
+        initData();
+        return scene;
     }
 
-    class UpdateService extends Service<Object> {
+    /**
+     * 与FutureTask一样，Task是一个一次性类，其实例对象不能重复使用。
+     */
+    class UpdateUI extends Task<Object> {
+
         @Override
-        protected Task<Object> createTask() {
-            return new Task<Object>() {
-                @Override
-                protected Object call() throws Exception {
-                    try {
-                        //UI线程暂停2秒，以便让用户看到选择的对、错
-                        TimeUnit.SECONDS.sleep(2);
-                    } catch (InterruptedException ignored) {
-                    }
-                    return null;
-                }
+        protected Object call() throws Exception {
+            //2秒后刷新UI
+            TimeUnit.SECONDS.sleep(2);
+            return null;
+        }
 
-                @Override
-                protected void updateValue(Object value) {
-                    super.updateValue(value);
-                    enPreviousLabel.setText(dictionaryList.get(dataIndex).getEn());
+        @Override
+        protected void updateValue(Object value) {
+            enPreviousLabel.setText(dictionaryList.get(dataIndex).getEn());
 
-                    zhSelectLabel1.setStyle(null);
-                    zhSelectLabel2.setStyle(null);
-                    zhSelectLabel3.setStyle(null);
-                    zhSelectLabel4.setStyle(null);
+            zhSelectLabel1.setStyle(null);
+            zhSelectLabel2.setStyle(null);
+            zhSelectLabel3.setStyle(null);
+            zhSelectLabel4.setStyle(null);
 
-                    dataIndex += 1;
-                    if (dataIndex == dataSize) {
-                        gameEnd();
-                        return;
-                    }
+            dataIndex += 1;
+            if (dataIndex == dataSize) {
+                gameEnd();
+                return;
+            }
 
-                    doPressed = true;
-                    updateQuestion();
-                }
-            };
+            doPressed = true;
+            updateQuestion();
         }
     }
 }

@@ -16,7 +16,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,27 +26,24 @@ import java.util.regex.Pattern;
  * @author XYC
  */
 public abstract class AbstractScene extends AbstractNodeAccessor {
+
+    public static final Pattern PATTERN = Pattern.compile("\\w+");
     public static final Random RANDOM = new Random();
-    public static int dataSize;
-    public static int dataIndex;
-    protected static DictionaryService dictionaryService = DictionaryServiceImpl.DICTIONARY_SERVICE;
-    protected static CorpusService corpusService = CorpusServiceImpl.CORPUS_SERVICE;
     protected static List<Dictionary> dictionaryList = new ArrayList<>();
     protected static List<Corpus> corpusList = new ArrayList<>();
-    protected static Dialog<ButtonType> dialog = new Dialog<>();
+    protected static final DictionaryService DICTIONARY_SERVICE = DictionaryServiceImpl.DICTIONARY_SERVICE;
+    protected static final CorpusService CORPUS_SERVICE = CorpusServiceImpl.CORPUS_SERVICE;
+    public static int dataSize;
+    public static int dataIndex;
+    protected Scene scene;
+
+    protected AnchorPane anchorPane;
+    protected static Dialog<ButtonType> mainDialog = new Dialog<>();
 
     static {
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.NO, ButtonType.OK);
-        dialog.initOwner(EnglishAppStart.primaryStage);
-        dialog.initModality(Modality.WINDOW_MODAL);
+        mainDialog.getDialogPane().getButtonTypes().addAll(ButtonType.NO, ButtonType.OK);
     }
 
-    public final Pattern pattern = Pattern.compile("[\\w]+");
-    public String sceneName;
-    protected Scene scene;
-    protected AnchorPane anchorPane;
-    protected HBox hBoxMain;
-    protected VBox vBoxMain;
     /**
      * 退出按钮
      */
@@ -57,47 +53,18 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
      */
     protected Button nextButton;
 
+    protected HBox sceneHBox;
+    protected VBox sceneVBox;
 
     public AbstractScene() {
         this.initScene();
         this.bindEvent();
     }
 
-    public static List<Corpus> getCorpusList() {
-        return corpusList;
-    }
-
-    public static Dialog<ButtonType> getDialog(String title, int width, int height) {
-        dialog.setTitle(title);
-        dialog.setWidth(width);
-        dialog.setHeight(height);
-        return dialog;
-    }
-
-    public static List<Tab> addTab() {
-        List<Tab> tabList = new ArrayList<>();
-        for (int i = 0; i < dictionaryList.size(); i++) {
-            Dictionary dictionary = dictionaryList.get(i);
-            Tab tab = new Tab(dictionary.getEn());
-
-            ListView<Object> listView = new ListView<>();
-            listView.getItems().add(dictionary.getZh());
-            tab.setContent(listView);
-            List<Corpus> list = dictionary.getCorpusList();
-            if (list != null) {
-                corpusList.clear();
-                corpusList.addAll(list);
-                listView.getItems().addAll(corpusList);
-            }
-            tabList.add(tab);
-        }
-        return tabList;
-    }
-
-    public void initScene() {
-        anchorPane = new AnchorPane();
-        anchorPane.setStyle("-fx-background-color: pink");
-        scene = new Scene(anchorPane);
+    public static void addMainDialog(String title, int width, int height) {
+        mainDialog.setTitle(title);
+        mainDialog.setWidth(width);
+        mainDialog.setHeight(height);
     }
 
     /**
@@ -110,6 +77,44 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
      */
     public abstract void bindEvent();
 
+    public static List<Tab> addTab() {
+        List<Tab> tabList = new ArrayList<>();
+        for (int i = 0; i < dictionaryList.size(); i++) {
+            Dictionary dictionary = dictionaryList.get(i);
+            Tab tab = new Tab(dictionary.getEn());
+
+            ListView<Object> listView = new ListView<>();
+            tab.setContent(listView);
+
+            listView.getItems().add(dictionary.getZh());
+            List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
+            if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
+                listView.getItems().addAll(dictionaryCorpusList);
+            }
+            tabList.add(tab);
+        }
+        return tabList;
+    }
+
+    /**
+     * 初始化场景界面
+     * 控件对象在这里创建
+     */
+    public void initScene() {
+        anchorPane = new AnchorPane();
+        anchorPane.setStyle("-fx-background-color: pink");
+        scene = new Scene(anchorPane);
+    }
+
+    public Scene run() {
+        initData();
+        return this.scene;
+    }
+
+    public Scene run(Object... args) {
+        return run();
+    }
+
     /**
      * 默认的退出按钮事件（回到主场景）
      */
@@ -117,23 +122,23 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("主场景");
+                EnglishAppStart.convertScene("MainScene");
             }
         });
     }
 
-    public void addHBoxMain() {
-        this.hBoxMain = new HBox(20);
-        this.hBoxMain.setAlignment(Pos.CENTER);
-        this.anchorPane.getChildren().add(hBoxMain);
+    public void addSceneHBox() {
+        this.sceneHBox = new HBox(20);
+        this.sceneHBox.setAlignment(Pos.CENTER);
+        this.anchorPane.getChildren().add(sceneHBox);
     }
 
-    public void addVBoxMain() {
-        this.vBoxMain = new VBox(36);
-        this.vBoxMain.setAlignment(Pos.CENTER);
-        this.vBoxMain.setStyle("-fx-background-color: rgba(60,83,176,0.68);-fx-pref-width: 378;-fx-pref-height: 266");
-        this.anchorPane.getChildren().add(vBoxMain);
-        AnchorPane.setTopAnchor(vBoxMain, 36.6);
+    public void addSceneVBox() {
+        this.sceneVBox = new VBox(36);
+        this.sceneVBox.setAlignment(Pos.CENTER);
+        this.sceneVBox.setStyle("-fx-background-color: rgba(60,83,176,0.68);-fx-pref-width: 378;-fx-pref-height: 266");
+        this.anchorPane.getChildren().add(sceneVBox);
+        AnchorPane.setTopAnchor(sceneVBox, 36.6);
     }
 
     public void addExitButton() {
@@ -150,13 +155,4 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
         AnchorPane.setRightAnchor(nextButton, 8.8);
     }
 
-    public Scene run() {
-        initData();
-        System.out.println(sceneName);
-        return this.scene;
-    }
-
-    public Scene run(Object... args) {
-        return run();
-    }
 }

@@ -2,7 +2,7 @@ package com.english.scene.game;
 
 import com.english.EnglishAppStart;
 import com.english.scene.general.word.CompleteWordByFillScene;
-import com.english.scheduled_service.GameCountDownScheduledService;
+import com.english.scheduled_service.CountDownScheduledService;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -15,25 +15,20 @@ import javafx.scene.layout.AnchorPane;
 /**
  * @author XYC
  */
-public class CompleteWordByFillGameScene extends CompleteWordByFillScene {
-    protected GameCountDownScheduledService gameCountDownScheduledService;
+public class CompleteWordByFillGameScene extends CompleteWordByFillScene implements CountDownScheduledService.CountDownSupport {
+    protected CountDownScheduledService gameCountDownScheduledService;
     protected Integer gameDuration;
     protected Integer correctCount;
-
     /**
      * 显示 倒计时 的Label
      */
     protected Label countDownLabel;
 
-    {
-        this.sceneName = "单词补全竞赛场景";
-    }
-
     @Override
     public void initScene() {
         super.initScene();
 
-        gameCountDownScheduledService = GameCountDownScheduledService.getScheduledService();
+        gameCountDownScheduledService = CountDownScheduledService.getScheduledService();
         countDownLabel = gameCountDownScheduledService.getCountDownLabel();
 
         this.anchorPane.getChildren().add(countDownLabel);
@@ -45,7 +40,7 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene {
     public void initData() {
         dataIndex = 0;
         correctCount = 0;
-        dictionaryList = dictionaryService.queryRandom(dataSize);
+        dictionaryList = DICTIONARY_SERVICE.queryRandom(dataSize);
         fillImplement();
         zhCurrentLabel.setText(dictionaryList.get(dataIndex).getZh());
     }
@@ -65,7 +60,7 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene {
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
                 releaseNode();
-                EnglishAppStart.convertScene("主场景");
+                EnglishAppStart.convertScene("MainScene");
             }
         });
     }
@@ -91,9 +86,6 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene {
                     dataIndex += 1;
                     correctCount += 1;
                     if (dataIndex == dataSize) {
-                        gameCountDownScheduledService.cancel();
-                        //gameCountDownScheduledService.reset();
-
                         gameEnd();
                     } else {
                         fillImplement();
@@ -106,26 +98,34 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene {
 
     public void gameEnd() {
         gameCountDownScheduledService.cancel();
-        getDialog("竞赛结束", 266, 166);
-        dialog.setContentText("共 " + dataSize + " 道题\n" +
+        addMainDialog("竞赛结束", 266, 166);
+        mainDialog.setContentText("共 " + dataSize + " 道题\n" +
                 "您一共答对 " + correctCount + " 道题\n" +
                 "成绩为: " + (100 / dataSize) * correctCount);
-        dialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+        mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
             @Override
             public void handle(DialogEvent event) {
-                dialog.setContentText(null);
-                EnglishAppStart.convertScene("单词展示场景");
+                mainDialog.setContentText(null);
+                EnglishAppStart.convertScene("WordShowScene");
             }
         });
-        dialog.show();
+        mainDialog.show();
+    }
+
+    @Override
+    public void countDownEnd() {
+        gameEnd();
     }
 
     @Override
     public Scene run(Object... args) {
         this.gameDuration = (Integer) args[0];
-
+        gameCountDownScheduledService.setCountDownSupport(this);
         gameCountDownScheduledService.setRemainTime(gameDuration);
         gameCountDownScheduledService.restart();
-        return super.run();
+        initData();
+        return scene;
     }
+
+
 }

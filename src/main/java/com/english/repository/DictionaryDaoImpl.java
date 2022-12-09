@@ -14,10 +14,6 @@ import java.util.List;
 public class DictionaryDaoImpl extends AbstractDao<Dictionary> implements DictionaryDao {
     public static final DictionaryDao DICTIONARY_DAO = new DictionaryDaoImpl();
 
-    {
-        this.tableName = "dictionary";
-    }
-
     private DictionaryDaoImpl() {
     }
 

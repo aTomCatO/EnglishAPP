@@ -2,7 +2,7 @@ package com.english.scene.game;
 
 import com.english.EnglishAppStart;
 import com.english.scene.AbstractScene;
-import com.english.scheduled_service.GameCountDownScheduledService;
+import com.english.scheduled_service.CountDownScheduledService;
 import javafx.event.EventHandler;
 import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
@@ -10,8 +10,8 @@ import javafx.scene.control.Label;
 /**
  * @author XYC
  */
-public abstract class AbstractGameScene extends AbstractScene {
-    protected GameCountDownScheduledService gameCountDownScheduledService;
+public abstract class AbstractGameScene extends AbstractScene implements CountDownScheduledService.CountDownSupport {
+    protected CountDownScheduledService gameCountDownScheduledService;
     protected Integer gameDuration;
     protected Integer correctCount;
 
@@ -22,17 +22,22 @@ public abstract class AbstractGameScene extends AbstractScene {
 
     public void gameEnd() {
         gameCountDownScheduledService.cancel();
-        getDialog("竞赛结束", 266, 166);
-        dialog.setContentText("共 " + dataSize + " 道题\n" +
+        addMainDialog("竞赛结束", 266, 166);
+        mainDialog.setContentText("共 " + dataSize + " 道题\n" +
                 "您一共答对 " + correctCount + " 道题\n" +
                 "成绩为: " + (100 / dataSize) * correctCount);
-        dialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+        mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
             @Override
             public void handle(DialogEvent event) {
-                dialog.setContentText(null);
-                EnglishAppStart.convertScene("单词展示场景");
+                mainDialog.setContentText(null);
+                EnglishAppStart.convertScene("WordShowScene");
             }
         });
-        dialog.show();
+        mainDialog.show();
+    }
+
+    @Override
+    public void countDownEnd() {
+        gameEnd();
     }
 }
