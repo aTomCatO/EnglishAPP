@@ -27,16 +27,14 @@ public class ReadSentenceFillWordScene extends AbstractScene {
         super.initScene();
 
         //进行场景基本组件实例化
-        enLabel = new Label();
+        enLabel = getLabel(16);
         zhTextLabel = new Label();
         enTextFlow = new TextFlow();
+        zhTextLabel.setFont(Font.font(16));
 
         addSceneVBox();
         addExitButton();
         addNextButton();
-
-        enLabel.setFont(Font.font(16));
-        zhTextLabel.setFont(Font.font(16));
 
         sceneVBox.getChildren().addAll(enLabel, enTextFlow, zhTextLabel);
     }
@@ -64,7 +62,6 @@ public class ReadSentenceFillWordScene extends AbstractScene {
             @Override
             public void handle(ActionEvent event) {
                 enTextFlow.getChildren().clear();
-                releaseNode();
                 EnglishAppStart.convertScene("MainScene");
             }
         });
@@ -114,8 +111,8 @@ public class ReadSentenceFillWordScene extends AbstractScene {
             System.out.println(matchedEn);
             int beginIndex = enText.indexOf(matchedEn);
             int endIndex = beginIndex + matchedEn.length();
-            TextField textField = getTextField(textFieldIndex++, 78);
-            Label label = getLabel(labelIndex++, 16);
+            TextField textField = getTextField(78);
+            Label label = getLabel(16);
             if (beginIndex == 0) {
                 enTextFlow.getChildren().add(textField);
             } else {
@@ -126,7 +123,7 @@ public class ReadSentenceFillWordScene extends AbstractScene {
 
         }
         if (enText.length() != 0) {
-            Label label = getLabel(labelIndex, 16);
+            Label label = getLabel(16);
             label.setText(enText);
             enTextFlow.getChildren().add(label);
         }

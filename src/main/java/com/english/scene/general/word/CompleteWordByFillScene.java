@@ -13,6 +13,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,19 +23,19 @@ import java.util.TreeSet;
  * 单词补全场景
  */
 public class CompleteWordByFillScene extends AbstractScene {
-    public TextFlow enCurrentTextFlow;
 
-    /**
-     * 显示计时器的 label
-     */
-    public Label enPreviousLabel;
-    public Label zhCurrentLabel;
-
+    protected static final List<TextField> TEXT_FIELD_LIST = new ArrayList<>();
     /**
      * fillChars 将挖去的字母存在字符数组中
      */
 
-    public char[] fillChars;
+    protected static char[] fillChars;
+    protected TextFlow enCurrentTextFlow;
+    /**
+     * 显示计时器的 label
+     */
+    protected Label enPreviousLabel;
+    protected Label zhCurrentLabel;
 
     @Override
     public void initScene() {
@@ -79,7 +81,6 @@ public class CompleteWordByFillScene extends AbstractScene {
             public void handle(ActionEvent event) {
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
-                releaseNode();
                 EnglishAppStart.convertScene("MainScene");
             }
         });
@@ -130,11 +131,10 @@ public class CompleteWordByFillScene extends AbstractScene {
         }
         StringBuilder piece = new StringBuilder();
         int textFieldIndex = 0;
-        int labelIndex = 0;
         for (int i = 0; i < enLength; i++) {
             if (indexSet.contains(i)) {
                 if (piece.length() > 0) {
-                    Label label = getLabel(labelIndex++, 26);
+                    Label label = getLabel(26);
                     label.setText(piece.toString());
 
                     enCurrentTextFlow.getChildren().add(label);
@@ -150,7 +150,7 @@ public class CompleteWordByFillScene extends AbstractScene {
             }
         }
         if (piece.length() > 0) {
-            Label label = getLabel(labelIndex, 26);
+            Label label = getLabel(26);
             label.setText(piece.toString());
             enCurrentTextFlow.getChildren().add(label);
         }
@@ -170,8 +170,7 @@ public class CompleteWordByFillScene extends AbstractScene {
     public void textFieldRequestFocus(int beginIndex) {
         for (int i = beginIndex; i < TEXT_FIELD_LIST.size(); i++) {
             TextField textField = TEXT_FIELD_LIST.get(i);
-            int thisIndex = TEXT_FIELD_LIST.indexOf(textField);
-
+            int thisIndex = i;
             textField.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -217,5 +216,16 @@ public class CompleteWordByFillScene extends AbstractScene {
                 }
             });
         }
+    }
+
+    public TextField getTextField(int index, int width) {
+        if (TEXT_FIELD_LIST.size() > index) {
+            TextField textField = TEXT_FIELD_LIST.get(index);
+            textField.clear();
+            return textField;
+        }
+        TextField textField = super.getTextField(width);
+        TEXT_FIELD_LIST.add(textField);
+        return textField;
     }
 }

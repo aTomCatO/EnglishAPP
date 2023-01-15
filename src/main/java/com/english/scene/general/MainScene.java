@@ -339,21 +339,21 @@ public class MainScene extends AbstractScene {
                 gridPane.setAlignment(Pos.CENTER);
                 gridPane.setVgap(6.6);
 
-                Label en = getLabel(0, 26);
+                Label en = getLabel(26);
                 en.setText("en: ");
-                TextField inputEn = getTextField(0, 666);
+                TextField inputEn = getTextField(666);
 
-                Label zh = getLabel(1, 26);
+                Label zh = getLabel(26);
                 zh.setText("zh: ");
-                TextField inputZh = getTextField(1, 666);
+                TextField inputZh = getTextField(666);
 
-                Label enText = getLabel(2, 26);
+                Label enText = getLabel(26);
                 enText.setText("enText: ");
-                TextField inputEnText = getTextField(2, 666);
+                TextField inputEnText = getTextField(666);
 
-                Label zhText = getLabel(3, 26);
+                Label zhText = getLabel(26);
                 zhText.setText("zhText: ");
-                TextField inputZhText = getTextField(3, 666);
+                TextField inputZhText = getTextField(666);
 
                 gridPane.add(en, 1, 0);
                 gridPane.add(inputEn, 2, 0);
@@ -387,7 +387,6 @@ public class MainScene extends AbstractScene {
                             }
                         }
                         MAIN_DIALOG.setGraphic(null);
-                        releaseNode();
                     }
                 });
             }

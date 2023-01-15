@@ -3,11 +3,11 @@ package com.english.scene;
 import com.english.EnglishAppStart;
 import com.english.entity.Corpus;
 import com.english.entity.Dictionary;
-import com.english.node_pool.AbstractNodeAccessor;
 import com.english.service.CorpusService;
 import com.english.service.CorpusServiceImpl;
 import com.english.service.DictionaryService;
 import com.english.service.DictionaryServiceImpl;
+import com.sun.istack.internal.NotNull;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * @author XYC
  */
-public abstract class AbstractScene extends AbstractNodeAccessor {
+public abstract class AbstractScene {
     protected static final DictionaryService DICTIONARY_SERVICE = DictionaryServiceImpl.DICTIONARY_SERVICE;
     protected static final CorpusService CORPUS_SERVICE = CorpusServiceImpl.CORPUS_SERVICE;
     public static final Pattern PATTERN = Pattern.compile("\\w+");
@@ -43,6 +44,7 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
     static {
         MAIN_DIALOG.getDialogPane().getButtonTypes().addAll(ButtonType.NO, ButtonType.OK);
     }
+
     /**
      * 退出按钮
      */
@@ -152,6 +154,21 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
         this.anchorPane.getChildren().add(nextButton);
         AnchorPane.setBottomAnchor(nextButton, 8.8);
         AnchorPane.setRightAnchor(nextButton, 8.8);
+    }
+
+    public Label getLabel(@NotNull int fontSize) {
+        Label label = new Label();
+        label.setWrapText(true);
+        label.setAlignment(Pos.CENTER);
+        label.setFont(Font.font(fontSize));
+        return label;
+    }
+
+    public TextField getTextField(int width) {
+        TextField textField = new TextField();
+        textField.setPrefWidth(width);
+        textField.setAlignment(Pos.CENTER);
+        return textField;
     }
 
 }

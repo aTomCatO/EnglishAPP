@@ -35,30 +35,19 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
     @Override
     public void initScene() {
         super.initScene();
+        enTextLabel = getLabel(13);
+        zhTextLabel = getLabel(13);
+        correctRateLabel = getLabel(16);
+        questionLabel = getLabel(13);
+
+        inputTextArea = new TextArea();
+        inputTextArea.setWrapText(true);
+        inputTextArea.setFont(Font.font(16));
+        inputTextArea.setPrefHeight(66);
 
         addSceneVBox();
         addExitButton();
         addNextButton();
-
-        enTextLabel = new Label();
-        zhTextLabel = new Label();
-        correctRateLabel = new Label();
-        questionLabel = new Label();
-
-        inputTextArea = new TextArea();
-
-        //设置自动换行
-        enTextLabel.setWrapText(true);
-        zhTextLabel.setWrapText(true);
-        questionLabel.setWrapText(true);
-        inputTextArea.setWrapText(true);
-
-        enTextLabel.setFont(Font.font(13));
-        zhTextLabel.setFont(Font.font(13));
-        correctRateLabel.setFont(Font.font(16));
-        inputTextArea.setFont(Font.font(16));
-
-        inputTextArea.setPrefHeight(66);
 
         anchorPane.getChildren().add(correctRateLabel);
         AnchorPane.setTopAnchor(correctRateLabel, 8.8);

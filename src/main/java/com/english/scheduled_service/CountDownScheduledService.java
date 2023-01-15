@@ -63,7 +63,7 @@ public class CountDownScheduledService extends ScheduledService<Integer> {
     //            return;
     //        }
     //    }
-    //    throw new UnsupportedOperationException("该对象类型"+scene.getClass().getSimpleName()+"不支持倒计时");
+    //    throw new UnsupportedOperationException("This object type "+scene.getClass().getSimpleName()+" does not support countdown");
     //}
 
     public interface CountDownSupport {

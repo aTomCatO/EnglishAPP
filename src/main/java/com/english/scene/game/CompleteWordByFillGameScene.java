@@ -60,7 +60,6 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
                 gameCountDownScheduledService.cancel();
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
-                releaseNode();
                 EnglishAppStart.convertScene("MainScene");
             }
         });
