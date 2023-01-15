@@ -36,7 +36,7 @@ public interface BaseService<T> {
     /**
      * 保存文件中的数据业务
      *
-     * @param filePath :文件路劲
+     * @param filePath 文件路劲
      */
     void saveByFile(String filePath);
 

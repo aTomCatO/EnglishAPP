@@ -23,17 +23,17 @@ public abstract class AbstractGameScene extends AbstractScene implements CountDo
     public void gameEnd() {
         gameCountDownScheduledService.cancel();
         addMainDialog("竞赛结束", 266, 166);
-        mainDialog.setContentText("共 " + dataSize + " 道题\n" +
+        MAIN_DIALOG.setContentText("共 " + dataSize + " 道题\n" +
                 "您一共答对 " + correctCount + " 道题\n" +
                 "成绩为: " + (100 / dataSize) * correctCount);
-        mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+        MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
             @Override
             public void handle(DialogEvent event) {
-                mainDialog.setContentText(null);
+                MAIN_DIALOG.setContentText(null);
                 EnglishAppStart.convertScene("WordShowScene");
             }
         });
-        mainDialog.show();
+        MAIN_DIALOG.show();
     }
 
     @Override

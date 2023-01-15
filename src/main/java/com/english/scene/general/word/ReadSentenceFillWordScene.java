@@ -21,7 +21,7 @@ public class ReadSentenceFillWordScene extends AbstractScene {
     private Label enLabel;
     private Label zhTextLabel;
 
-    private TextFlow enCurrentTextFlow;
+    private TextFlow enTextFlow;
     @Override
     public void initScene() {
         super.initScene();
@@ -29,7 +29,7 @@ public class ReadSentenceFillWordScene extends AbstractScene {
         //进行场景基本组件实例化
         enLabel = new Label();
         zhTextLabel = new Label();
-        enCurrentTextFlow = new TextFlow();
+        enTextFlow = new TextFlow();
 
         addSceneVBox();
         addExitButton();
@@ -38,17 +38,17 @@ public class ReadSentenceFillWordScene extends AbstractScene {
         enLabel.setFont(Font.font(16));
         zhTextLabel.setFont(Font.font(16));
 
-        sceneVBox.getChildren().addAll(enLabel, enCurrentTextFlow, zhTextLabel);
+        sceneVBox.getChildren().addAll(enLabel, enTextFlow, zhTextLabel);
     }
 
     public void initData() {
         dataSize = 20;
         dataIndex = 0;
-        corpusList.clear();
-        corpusList.addAll(CORPUS_SERVICE.queryRandom(dataSize));
+        CORPUS_LIST.clear();
+        CORPUS_LIST.addAll(CORPUS_SERVICE.queryRandom(dataSize));
 
-        zhTextLabel.setText(corpusList.get(dataIndex).getZhText());
-        nextCorpus();
+        zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
+        updateQuestion();
     }
 
 
@@ -63,7 +63,7 @@ public class ReadSentenceFillWordScene extends AbstractScene {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                enCurrentTextFlow.getChildren().clear();
+                enTextFlow.getChildren().clear();
                 releaseNode();
                 EnglishAppStart.convertScene("MainScene");
             }
@@ -72,10 +72,14 @@ public class ReadSentenceFillWordScene extends AbstractScene {
 
     public void nextButtonEvent() {
         nextButton.setOnAction(event -> {
-            String en = corpusList.get(dataIndex).getEn();
-            String enText = corpusList.get(dataIndex).getEnText();
+            String en = CORPUS_LIST.get(dataIndex).getEn();
+            String enText = CORPUS_LIST.get(dataIndex).getEnText();
             StringBuilder text = new StringBuilder();
-            for (Node child : enCurrentTextFlow.getChildren()) {
+            //如果句子只挖掉一个词，那么遍历获取每个 child 的 text 是不可取的，
+            //应直接获取 输入框 的 text 与句子中被挖去的词进行比较就行。（单词比较单词）
+            //但如果被挖掉的词出现在该句子中的其他地方（可能词性不同），那么这另一个词也会被挖掉
+            //这样造成的后果就是无法精确地进行比较，所以就采用了句子比较句子的方式。
+            for (Node child : enTextFlow.getChildren()) {
                 if (child instanceof TextField) {
                     TextField textField = (TextField) child;
                     text.append(textField.getText());
@@ -86,11 +90,11 @@ public class ReadSentenceFillWordScene extends AbstractScene {
                 }
             }
             if (text.toString().equals(enText)) {
-                enCurrentTextFlow.getChildren().clear();
+                enTextFlow.getChildren().clear();
                 enLabel.setText(null);
                 dataIndex += 1;
-                zhTextLabel.setText(corpusList.get(dataIndex).getZhText());
-                nextCorpus();
+                zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
+                updateQuestion();
             } else {
                 enLabel.setText(en);
             }
@@ -98,9 +102,9 @@ public class ReadSentenceFillWordScene extends AbstractScene {
     }
 
 
-    public void nextCorpus() {
-        String en = corpusList.get(dataIndex).getEn();
-        String enText = corpusList.get(dataIndex).getEnText();
+    public void updateQuestion() {
+        String en = CORPUS_LIST.get(dataIndex).getEn();
+        String enText = CORPUS_LIST.get(dataIndex).getEnText();
         Pattern pattern = Pattern.compile("(?i)" + en + "[a-z]*");
         Matcher matcher = pattern.matcher(enText);
         int textFieldIndex = 0;
@@ -113,10 +117,10 @@ public class ReadSentenceFillWordScene extends AbstractScene {
             TextField textField = getTextField(textFieldIndex++, 78);
             Label label = getLabel(labelIndex++, 16);
             if (beginIndex == 0) {
-                enCurrentTextFlow.getChildren().add(textField);
+                enTextFlow.getChildren().add(textField);
             } else {
                 label.setText(enText.substring(0, beginIndex));
-                enCurrentTextFlow.getChildren().addAll(label, textField);
+                enTextFlow.getChildren().addAll(label, textField);
                 enText = enText.substring(endIndex);
             }
 
@@ -124,7 +128,7 @@ public class ReadSentenceFillWordScene extends AbstractScene {
         if (enText.length() != 0) {
             Label label = getLabel(labelIndex, 16);
             label.setText(enText);
-            enCurrentTextFlow.getChildren().add(label);
+            enTextFlow.getChildren().add(label);
         }
     }
 }

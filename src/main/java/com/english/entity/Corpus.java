@@ -1,4 +1,4 @@
-package com.english.javaBeans;
+package com.english.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Corpus extends DataBean {
+public class Corpus {
 
     private String en;
 

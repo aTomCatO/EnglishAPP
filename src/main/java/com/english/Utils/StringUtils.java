@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
  */
 public class StringUtils {
     public static String substringRange(String str, String range) {
-
         String regex1 = "\\[\\d,\\d\\]";
         String regex2 = "\\[\\d,\\d\\)";
         String regex3 = "\\(\\d,\\d\\]";

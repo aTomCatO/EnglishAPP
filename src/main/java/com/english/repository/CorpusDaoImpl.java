@@ -1,6 +1,6 @@
 package com.english.repository;
 
-import com.english.javaBeans.Corpus;
+import com.english.entity.Corpus;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

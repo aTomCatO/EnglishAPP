@@ -2,12 +2,11 @@ package com.english.scene.general.sentence;
 
 import com.english.EnglishAppStart;
 import com.english.scene.AbstractScene;
-import com.english.scheduled_service.TimedCloseDialogService;
-import javafx.concurrent.Service;
+import com.english.service.BaseService;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
@@ -21,14 +20,16 @@ import java.util.regex.Matcher;
  * 语句默写场景
  */
 public class SentenceWriteFromMemoryScene extends AbstractScene {
-    private Service<Boolean> service;
+    /**
+     * 计时关闭弹窗任务
+     */
+    private Task<Boolean> timedCloseDialogTask;
     private Label enTextLabel;
     private Label zhTextLabel;
     private TextArea inputTextArea;
     private Label correctRateLabel;
     private Integer correctCount;
 
-    private Dialog<ButtonType> questionDialog;
     private Label questionLabel;
 
     @Override
@@ -64,26 +65,16 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
         AnchorPane.setRightAnchor(correctRateLabel, 8.8);
 
         sceneVBox.getChildren().addAll(enTextLabel, inputTextArea, zhTextLabel);
-
-        //题目弹窗
-        questionDialog = new Dialog<>();
-        questionDialog.setGraphic(questionLabel);
-        questionDialog.setTitle("请看题");
-        questionDialog.setWidth(366);
-        questionDialog.setHeight(166);
-        //dialog弹窗至少需要添加一个按钮，否则将不能关闭
-        questionDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
-
-        service = new TimedCloseDialogService(questionDialog);
     }
+
 
     @Override
     public void initData() {
         dataSize = 10;
         dataIndex = 0;
         correctCount = 0;
-        corpusList.clear();
-        corpusList.addAll(CORPUS_SERVICE.queryRandom(dataSize));
+        CORPUS_LIST.clear();
+        CORPUS_LIST.addAll(CORPUS_SERVICE.queryRandom(dataSize));
 
         updateQuestion();
     }
@@ -102,7 +93,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
             @Override
             public void handle(ActionEvent event) {
                 String inputText = inputTextArea.getText();
-                String enSentence = corpusList.get(dataIndex).getEnText();
+                String enSentence = CORPUS_LIST.get(dataIndex).getEnText();
                 if (StringUtils.isBlank(inputText)) {
                     enTextLabel.setText(enSentence);
                     return;
@@ -141,20 +132,42 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
     @Override
     public void exitButtonEvent() {
         exitButton.setOnAction(event -> {
-            service.cancel();
-
+            if (timedCloseDialogTask != null) {
+                timedCloseDialogTask.cancel();
+            }
+            MAIN_DIALOG.setGraphic(null);
             enTextLabel.setText(null);
-
             EnglishAppStart.convertScene("MainScene");
         });
     }
 
     public void updateQuestion() {
-        String enText = corpusList.get(dataIndex).getEnText();
+        String enText = CORPUS_LIST.get(dataIndex).getEnText();
         System.out.println(enText);
-        questionLabel.setText(corpusList.get(dataIndex).getEnText());
-        zhTextLabel.setText(corpusList.get(dataIndex).getZhText());
-        questionDialog.show();
-        service.restart();
+        questionLabel.setText(CORPUS_LIST.get(dataIndex).getEnText());
+        zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
+        MAIN_DIALOG.show();
+
+        timedCloseDialogTask = new Task<Boolean>() {
+            @Override
+            protected Boolean call() throws InterruptedException {
+                Thread.sleep(6000);
+                return null;
+            }
+
+            @Override
+            protected void updateValue(Boolean open) {
+                MAIN_DIALOG.close();
+            }
+        };
+        BaseService.THREAD_POOL.execute(timedCloseDialogTask);
     }
+
+    @Override
+    public Scene run() {
+        addMainDialog("请看题", 366, 166);
+        MAIN_DIALOG.setGraphic(questionLabel);
+        return super.run();
+    }
+
 }

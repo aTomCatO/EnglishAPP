@@ -1,6 +1,6 @@
 package com.english.service;
 
-import com.english.javaBeans.Corpus;
+import com.english.entity.Corpus;
 
 /**
  * @author XYC

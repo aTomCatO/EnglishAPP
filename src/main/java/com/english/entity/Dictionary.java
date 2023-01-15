@@ -1,4 +1,4 @@
-package com.english.javaBeans;
+package com.english.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Dictionary extends DataBean {
+public class Dictionary {
 
     private String en;
 

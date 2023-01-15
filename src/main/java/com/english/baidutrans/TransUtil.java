@@ -131,13 +131,4 @@ public class TransUtil {
         }
         return input;
     }
-
-    public static void main(String[] args) throws Exception {
-        System.out.println(
-                TransUtil.getTransResult(
-                        "漂亮",
-                        "zh",
-                        "en")
-        );
-    }
 }

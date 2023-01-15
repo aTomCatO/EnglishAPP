@@ -42,7 +42,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
     private VBox vBox1;
     private VBox vBox2;
     private BorderPane borderPane;
-    private UpdateUI currentTask;
+    private UpdateUiTask updateUiTask;
     private boolean doPressed = true;
 
     @Override
@@ -96,14 +96,14 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
     public void initData() {
         dataIndex = 0;
         correctCount = 0;
-        dictionaryList.clear();
-        dictionaryList.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
+        DICTIONARY_LIST.clear();
+        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
         updateQuestion();
     }
 
     public void updateQuestion() {
-        String en = dictionaryList.get(dataIndex).getEn();
-        String zh = dictionaryList.get(dataIndex).getZh();
+        String en = DICTIONARY_LIST.get(dataIndex).getEn();
+        String zh = DICTIONARY_LIST.get(dataIndex).getZh();
         enCurrentLabel.setText(en);
         System.out.println(zh);
 
@@ -114,36 +114,36 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
                 zhSelectLabel1.setText(zh);
                 zhAccurateSelectLabel = zhSelectLabel1;
 
-                zhSelectLabel2.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel3.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel4.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel2.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel3.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel4.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
                 break;
             }
             case 2: {
                 zhSelectLabel2.setText(zh);
                 zhAccurateSelectLabel = zhSelectLabel2;
 
-                zhSelectLabel1.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel3.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel4.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel1.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel3.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel4.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
                 break;
             }
             case 3: {
                 zhSelectLabel3.setText(zh);
                 zhAccurateSelectLabel = zhSelectLabel3;
 
-                zhSelectLabel1.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel2.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel4.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel1.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel2.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel4.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
                 break;
             }
             default: {
                 zhSelectLabel4.setText(zh);
                 zhAccurateSelectLabel = zhSelectLabel4;
 
-                zhSelectLabel1.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel2.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
-                zhSelectLabel3.setText(dictionaryList.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel1.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel2.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
+                zhSelectLabel3.setText(DICTIONARY_LIST.get(wrongIndexSet.pollFirst()).getZh());
                 break;
             }
         }
@@ -171,10 +171,9 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                currentTask.cancel();
+                updateUiTask.cancel();
                 gameCountDownScheduledService.cancel();
                 enPreviousLabel.setText(null);
-                releaseNode();
                 EnglishAppStart.convertScene("MainScene");
             }
         });
@@ -186,65 +185,57 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
                 doPressed = false;
                 switch (keyEvent.getCode().getName()) {
                     case "A": {
-                        if (!isCorrect(zhSelectLabel1)) {
-                            zhAccurateSelectLabel.setStyle("-fx-background-color: #75de6f");
-                        }
+                        judge(zhSelectLabel1);
                         break;
                     }
                     case "B": {
-                        if (!isCorrect(zhSelectLabel2)) {
-                            zhAccurateSelectLabel.setStyle("-fx-background-color: #75de6f");
-                        }
+                        judge(zhSelectLabel2);
                         break;
                     }
                     case "C": {
-                        if (!isCorrect(zhSelectLabel3)) {
-                            zhAccurateSelectLabel.setStyle("-fx-background-color: #75de6f");
-                        }
+                        judge(zhSelectLabel3);
                         break;
                     }
                     case "D": {
-                        if (!isCorrect(zhSelectLabel4)) {
-                            zhAccurateSelectLabel.setStyle("-fx-background-color: #75de6f");
-                        }
+                        judge(zhSelectLabel4);
                         break;
                     }
                     default: {
                         doPressed = true;
-                        return;
+                        break;
                     }
                 }
-                currentTask = new UpdateUI();
-                BaseService.THREAD_POOL.execute(currentTask);
             }
         });
     }
 
-    public boolean isCorrect(Label zhChooseLabel) {
-        if (dictionaryList.get(dataIndex).getZh().equals(zhChooseLabel.getText())) {
+    public void judge(Label zhChooseLabel) {
+        if (DICTIONARY_LIST.get(dataIndex).getZh().equals(zhChooseLabel.getText())) {
             correctCount += 1;
             zhChooseLabel.setStyle("-fx-background-color: #75de6f");
-            return true;
+        } else {
+            zhChooseLabel.setStyle("-fx-background-color: #d24f76");
+            zhAccurateSelectLabel.setStyle("-fx-background-color: #75de6f");
         }
-        zhChooseLabel.setStyle("-fx-background-color: #d24f76");
-        return false;
+        updateUiTask = new UpdateUiTask();
+        BaseService.THREAD_POOL.execute(updateUiTask);
     }
 
     @Override
     public Scene run(Object... args) {
-        this.gameDuration = (Integer) args[0];
+        gameDuration = (Integer) args[0];
+        initData();
         doPressed = true;
         gameCountDownScheduledService.setCountDownSupport(this);
-        gameCountDownScheduledService.setRemainTime(gameDuration);
+        gameCountDownScheduledService.setTime(gameDuration);
         gameCountDownScheduledService.restart();
-        initData();
         return scene;
     }
 
     /**
      * 与FutureTask一样，Task是一个一次性类，其实例对象不能重复使用。
      */
-    class UpdateUI extends Task<Object> {
+    class UpdateUiTask extends Task<Object> {
 
         @Override
         protected Object call() throws Exception {
@@ -255,7 +246,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
 
         @Override
         protected void updateValue(Object value) {
-            enPreviousLabel.setText(dictionaryList.get(dataIndex).getEn());
+            enPreviousLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
 
             zhSelectLabel1.setStyle(null);
             zhSelectLabel2.setStyle(null);

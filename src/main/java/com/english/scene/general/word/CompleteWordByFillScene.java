@@ -59,10 +59,11 @@ public class CompleteWordByFillScene extends AbstractScene {
     @Override
     public void initData() {
         dataSize = 20;
-        dictionaryList = DICTIONARY_SERVICE.queryRandom(dataSize);
+        DICTIONARY_LIST.clear();
+        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
         dataIndex = RANDOM.nextInt(dataSize);
         fillImplement();
-        zhCurrentLabel.setText(dictionaryList.get(dataIndex).getZh());
+        zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
     }
 
     @Override
@@ -90,11 +91,11 @@ public class CompleteWordByFillScene extends AbstractScene {
             public void handle(ActionEvent event) {
                 enCurrentTextFlow.getChildren().clear();
                 //先通过旧单词的索引设置 enPreviousLabel 的文本
-                enPreviousLabel.setText(dictionaryList.get(dataIndex).getEn());
+                enPreviousLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
                 //再更新为新单词的索引
                 dataIndex = RANDOM.nextInt(dataSize);
                 fillImplement();
-                zhCurrentLabel.setText(dictionaryList.get(dataIndex).getZh());
+                zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
 
                 TEXT_FIELD_LIST.get(0).requestFocus();
             }
@@ -114,7 +115,7 @@ public class CompleteWordByFillScene extends AbstractScene {
     public void fillImplement() {
         int beforeSize = TEXT_FIELD_LIST.size();
 
-        String en = dictionaryList.get(dataIndex).getEn();
+        String en = DICTIONARY_LIST.get(dataIndex).getEn();
         System.out.println(en);
         char[] enChars = en.toCharArray();
         int enLength = enChars.length;

@@ -1,8 +1,8 @@
 package com.english.scene;
 
 import com.english.EnglishAppStart;
-import com.english.javaBeans.Corpus;
-import com.english.javaBeans.Dictionary;
+import com.english.entity.Corpus;
+import com.english.entity.Dictionary;
 import com.english.node_pool.AbstractNodeAccessor;
 import com.english.service.CorpusService;
 import com.english.service.CorpusServiceImpl;
@@ -26,24 +26,23 @@ import java.util.regex.Pattern;
  * @author XYC
  */
 public abstract class AbstractScene extends AbstractNodeAccessor {
-
-    public static final Pattern PATTERN = Pattern.compile("\\w+");
-    public static final Random RANDOM = new Random();
-    protected static List<Dictionary> dictionaryList = new ArrayList<>();
-    protected static List<Corpus> corpusList = new ArrayList<>();
     protected static final DictionaryService DICTIONARY_SERVICE = DictionaryServiceImpl.DICTIONARY_SERVICE;
     protected static final CorpusService CORPUS_SERVICE = CorpusServiceImpl.CORPUS_SERVICE;
+    public static final Pattern PATTERN = Pattern.compile("\\w+");
+    public static final Random RANDOM = new Random();
+    protected static final List<Dictionary> DICTIONARY_LIST = new ArrayList<>();
+    protected static final List<Corpus> CORPUS_LIST = new ArrayList<>();
+
     public static int dataSize;
     public static int dataIndex;
     protected Scene scene;
 
     protected AnchorPane anchorPane;
-    protected static Dialog<ButtonType> mainDialog = new Dialog<>();
+    protected static final Dialog<ButtonType> MAIN_DIALOG = new Dialog<>();
 
     static {
-        mainDialog.getDialogPane().getButtonTypes().addAll(ButtonType.NO, ButtonType.OK);
+        MAIN_DIALOG.getDialogPane().getButtonTypes().addAll(ButtonType.NO, ButtonType.OK);
     }
-
     /**
      * 退出按钮
      */
@@ -62,9 +61,9 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
     }
 
     public static void addMainDialog(String title, int width, int height) {
-        mainDialog.setTitle(title);
-        mainDialog.setWidth(width);
-        mainDialog.setHeight(height);
+        MAIN_DIALOG.setTitle(title);
+        MAIN_DIALOG.setWidth(width);
+        MAIN_DIALOG.setHeight(height);
     }
 
     /**
@@ -79,8 +78,8 @@ public abstract class AbstractScene extends AbstractNodeAccessor {
 
     public static List<Tab> addTab() {
         List<Tab> tabList = new ArrayList<>();
-        for (int i = 0; i < dictionaryList.size(); i++) {
-            Dictionary dictionary = dictionaryList.get(i);
+        for (int i = 0; i < DICTIONARY_LIST.size(); i++) {
+            Dictionary dictionary = DICTIONARY_LIST.get(i);
             Tab tab = new Tab(dictionary.getEn());
 
             ListView<Object> listView = new ListView<>();

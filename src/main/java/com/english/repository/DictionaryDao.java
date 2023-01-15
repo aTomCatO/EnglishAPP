@@ -1,6 +1,6 @@
 package com.english.repository;
 
-import com.english.javaBeans.Dictionary;
+import com.english.entity.Dictionary;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.english.service;
 
-import com.english.javaBeans.Dictionary;
+import com.english.entity.Dictionary;
 
 import java.util.List;
 
@@ -26,12 +26,4 @@ public interface DictionaryService extends BaseService<Dictionary> {
      * @return List
      */
     List<Dictionary> queryRandomAddCorpus(int amount);
-
-
-    /**
-     * 查询：联合查询
-     * @param amount 数量
-     * @return List
-     * */
-    //List<Dictionary> queryRandomCombine(int amount);
 }

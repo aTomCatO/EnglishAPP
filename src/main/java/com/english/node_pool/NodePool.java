@@ -106,8 +106,8 @@ public class NodePool {
         @Override
         public void passivateObject(PooledObject<Label> p) throws Exception {
             Label label = p.getObject();
-            label.setFont(null);
             label.setText(null);
+            label.setStyle(null);
         }
     }
 }

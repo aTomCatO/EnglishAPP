@@ -22,6 +22,11 @@ public class WordBrowseScene extends AbstractScene {
     private Label zhCurrentLabel;
 
     private final ScheduledService<Integer> scheduledService = new ScheduledService<Integer>() {
+        {
+            setDelay(Duration.seconds(6));
+            setPeriod(Duration.seconds(6));
+        }
+
         @Override
         protected Task<Integer> createTask() {
             return new Task<Integer>() {
@@ -29,17 +34,17 @@ public class WordBrowseScene extends AbstractScene {
                 protected Integer call() throws Exception {
                     if (dataIndex == dataSize - 1) {
                         dataIndex = 0;
-                        dictionaryList = DICTIONARY_SERVICE.queryRandom(dataSize);
+                        DICTIONARY_LIST.clear();
+                        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
                     }
                     return dataIndex += 1;
                 }
 
                 @Override
                 protected void updateValue(Integer index) {
-                    super.updateValue(index);
-                    enPreviousLabel.setText(dictionaryList.get(index - 1).getEn());
-                    enCurrentLabel.setText(dictionaryList.get(index).getEn());
-                    zhCurrentLabel.setText(dictionaryList.get(index).getZh());
+                    enPreviousLabel.setText(DICTIONARY_LIST.get(index - 1).getEn());
+                    enCurrentLabel.setText(DICTIONARY_LIST.get(index).getEn());
+                    zhCurrentLabel.setText(DICTIONARY_LIST.get(index).getZh());
                 }
             };
         }
@@ -62,17 +67,17 @@ public class WordBrowseScene extends AbstractScene {
         addNextButton();
         addSceneVBox();
         sceneVBox.getChildren().addAll(enPreviousLabel, enCurrentLabel, zhCurrentLabel);
-
     }
 
     @Override
     public void initData() {
         dataSize = 30;
         dataIndex = 0;
-        dictionaryList = DICTIONARY_SERVICE.queryRandom(dataSize);
+        DICTIONARY_LIST.clear();
+        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
 
-        enCurrentLabel.setText(dictionaryList.get(dataIndex).getEn());
-        zhCurrentLabel.setText(dictionaryList.get(dataIndex).getZh());
+        enCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
+        zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
     }
 
 
@@ -95,10 +100,8 @@ public class WordBrowseScene extends AbstractScene {
 
     @Override
     public Scene run() {
-        scheduledService.setDelay(Duration.seconds(6));
-        scheduledService.setPeriod(Duration.seconds(6));
-        scheduledService.start();
         initData();
+        scheduledService.start();
         return scene;
     }
 }

@@ -15,7 +15,7 @@ import lombok.Data;
 public class CountDownScheduledService extends ScheduledService<Integer> {
 
     private static CountDownScheduledService scheduledService;
-    private Integer remainTime;
+    private Integer time;
     private Label countDownLabel;
 
     private CountDownSupport countDownSupport;
@@ -40,7 +40,7 @@ public class CountDownScheduledService extends ScheduledService<Integer> {
         return new Task<Integer>() {
             @Override
             protected Integer call() throws Exception {
-                return remainTime--;
+                return time--;
             }
 
             @Override
@@ -55,10 +55,22 @@ public class CountDownScheduledService extends ScheduledService<Integer> {
         };
     }
 
+    //public void start(AbstractScene scene) {
+    //    Class<?>[] interfaces = scene.getClass().getInterfaces();
+    //    for (Class<?> anInterface : interfaces) {
+    //        if (anInterface.equals(CountDownSupport.class)) {
+    //            restart();
+    //            return;
+    //        }
+    //    }
+    //    throw new UnsupportedOperationException("该对象类型"+scene.getClass().getSimpleName()+"不支持倒计时");
+    //}
+
     public interface CountDownSupport {
         /**
          * 倒计时结束
          */
         void countDownEnd();
     }
+
 }

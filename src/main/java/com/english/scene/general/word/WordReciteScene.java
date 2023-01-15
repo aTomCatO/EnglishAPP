@@ -1,8 +1,8 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
-import com.english.javaBeans.Corpus;
-import com.english.javaBeans.Dictionary;
+import com.english.entity.Corpus;
+import com.english.entity.Dictionary;
 import com.english.scene.AbstractScene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -53,9 +53,10 @@ public class WordReciteScene extends AbstractScene {
 
     @Override
     public void initData() {
-        dictionaryList = DICTIONARY_SERVICE.queryRandomAddCorpus(dataSize);
+        DICTIONARY_LIST.clear();
+        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandomAddCorpus(dataSize));
         dataIndex = 0;
-        Dictionary dictionary = dictionaryList.get(dataIndex);
+        Dictionary dictionary = DICTIONARY_LIST.get(dataIndex);
         enCurrentLabel.setText(dictionary.getEn());
         zhLabel.setText(dictionary.getZh());
 
@@ -81,7 +82,7 @@ public class WordReciteScene extends AbstractScene {
                 dataIndex += 1;
                 if (dataIndex < dataSize) {
                     listView.getItems().clear();
-                    Dictionary dictionary = dictionaryList.get(dataIndex);
+                    Dictionary dictionary = DICTIONARY_LIST.get(dataIndex);
                     enCurrentLabel.setText(dictionary.getEn());
                     zhLabel.setText(dictionary.getZh());
                     List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
@@ -96,15 +97,15 @@ public class WordReciteScene extends AbstractScene {
                     ChoiceBox<String> choiceBox = new ChoiceBox<>();
                     choiceBox.setValue("退出");
                     choiceBox.getItems().addAll(items);
-                    mainDialog.setTitle("计划完成");
-                    mainDialog.setGraphic(choiceBox);
-                    mainDialog.show();
-                    mainDialog.setWidth(266);
-                    mainDialog.setHeight(166);
-                    mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                    MAIN_DIALOG.setTitle("计划完成");
+                    MAIN_DIALOG.setGraphic(choiceBox);
+                    MAIN_DIALOG.show();
+                    MAIN_DIALOG.setWidth(266);
+                    MAIN_DIALOG.setHeight(166);
+                    MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
                         @Override
                         public void handle(DialogEvent event) {
-                            if (mainDialog.getResult().getButtonData().isDefaultButton()) {
+                            if (MAIN_DIALOG.getResult().getButtonData().isDefaultButton()) {
                                 String selectedItem = choiceBox.getValue();
                                 switch (selectedItem) {
                                     case "单词补全": {
@@ -122,7 +123,7 @@ public class WordReciteScene extends AbstractScene {
                                     }
                                 }
                             }
-                            mainDialog.setGraphic(null);
+                            MAIN_DIALOG.setGraphic(null);
                         }
                     });
                 }

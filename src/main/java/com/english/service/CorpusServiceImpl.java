@@ -2,7 +2,7 @@ package com.english.service;
 
 import com.english.Utils.FileUtils;
 import com.english.baidutrans.TransUtil;
-import com.english.javaBeans.Corpus;
+import com.english.entity.Corpus;
 import com.english.repository.CorpusDao;
 import com.english.repository.CorpusDaoImpl;
 import org.springframework.util.StringUtils;

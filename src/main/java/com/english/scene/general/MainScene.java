@@ -1,8 +1,8 @@
 package com.english.scene.general;
 
 import com.english.EnglishAppStart;
-import com.english.javaBeans.Corpus;
-import com.english.javaBeans.Dictionary;
+import com.english.entity.Corpus;
+import com.english.entity.Dictionary;
 import com.english.scene.AbstractScene;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -108,7 +108,8 @@ public class MainScene extends AbstractScene {
     }
 
     public void initData() {
-        dictionaryList = DICTIONARY_SERVICE.queryRandomAddCorpus(6);
+        DICTIONARY_LIST.clear();
+        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandomAddCorpus(6));
         tabPane.getTabs().clear();
         tabPane.getTabs().addAll(addTab());
     }
@@ -144,12 +145,12 @@ public class MainScene extends AbstractScene {
                 vBox.getChildren().addAll(inputCount, selectTimeBox);
 
                 addMainDialog("竞赛", 266, 166);
-                mainDialog.setGraphic(vBox);
-                mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                MAIN_DIALOG.setGraphic(vBox);
+                MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
                     public void handle(DialogEvent dialogEvent) {
-                        //System.out.println(mainDialog.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE);
-                        if (mainDialog.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+                        //System.out.println(MAIN_DIALOG.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE);
+                        if (MAIN_DIALOG.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
                             String count = inputCount.getText();
                             if (!count.matches("([1-9]{1}[\\d]*)$")) {
                                 return;
@@ -162,10 +163,10 @@ public class MainScene extends AbstractScene {
                                 EnglishAppStart.convertScene("SelectMeanByWordGameScene", gameDuration);
                             }
                         }
-                        mainDialog.setGraphic(null);
+                        MAIN_DIALOG.setGraphic(null);
                     }
                 });
-                mainDialog.show();
+                MAIN_DIALOG.show();
             }
         };
         completeWordByFillGameEvent();
@@ -209,18 +210,18 @@ public class MainScene extends AbstractScene {
                     String zhTextRegex = "[\u4e00-\u9fa5\\w\\pP]+";
                     String enRegex = "[a-zA-Z]+";
                     String enTextRegex = "[\\w\\s\\pP]+";
-                    dictionaryList.clear();
+                    DICTIONARY_LIST.clear();
                     Corpus corpus = null;
                     if (content.matches(zhRegex)) {
-                        dictionaryList.addAll(DICTIONARY_SERVICE.translate(content, "zh", "en"));
+                        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.translate(content, "zh", "en"));
                     } else if (content.matches(enRegex)) {
-                        dictionaryList.addAll(DICTIONARY_SERVICE.translate(content, "en", "zh"));
+                        DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.translate(content, "en", "zh"));
                     } else if (content.matches(zhTextRegex)) {
                         corpus = CORPUS_SERVICE.translate(content, "zh", "en");
                     } else if (content.matches(enTextRegex)) {
                         corpus = CORPUS_SERVICE.translate(content, "en", "zh");
                     }
-                    if (dictionaryList.size() > 0) {
+                    if (DICTIONARY_LIST.size() > 0) {
                         tabPane.getTabs().clear();
                         tabPane.getTabs().addAll(addTab());
                     } else if (corpus != null) {
@@ -247,21 +248,21 @@ public class MainScene extends AbstractScene {
                 TextField inputNumber = new TextField();
                 inputNumber.setPrefWidth(88);
                 inputNumber.setPromptText("计划词数");
-                mainDialog.setGraphic(inputNumber);
-                mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                MAIN_DIALOG.setGraphic(inputNumber);
+                MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
                     public void handle(DialogEvent event) {
-                        if (mainDialog.getResult().getButtonData().isDefaultButton()) {
+                        if (MAIN_DIALOG.getResult().getButtonData().isDefaultButton()) {
                             String numberText = inputNumber.getText();
                             if (numberText.matches("\\d+") || "0".equals(numberText)) {
                                 dataSize = Integer.parseInt(numberText);
                                 EnglishAppStart.convertScene("WordReciteScene");
                             }
                         }
-                        mainDialog.setGraphic(null);
+                        MAIN_DIALOG.setGraphic(null);
                     }
                 });
-                mainDialog.show();
+                MAIN_DIALOG.show();
             }
         });
     }
@@ -364,12 +365,12 @@ public class MainScene extends AbstractScene {
                 gridPane.add(inputZhText, 2, 6);
 
                 addMainDialog("导入数据", 866, 258);
-                mainDialog.setGraphic(gridPane);
-                mainDialog.show();
-                mainDialog.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                MAIN_DIALOG.setGraphic(gridPane);
+                MAIN_DIALOG.show();
+                MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
                     public void handle(DialogEvent event) {
-                        if (mainDialog.getResult().getButtonData().isDefaultButton()) {
+                        if (MAIN_DIALOG.getResult().getButtonData().isDefaultButton()) {
                             String zhRegex = "[\u4e00-\u9fa5]+";
                             String zhTextRegex = "[\u4e00-\u9fa5\\w\\pP]+";
                             String enRegex = "[a-zA-Z]+";
@@ -385,7 +386,7 @@ public class MainScene extends AbstractScene {
                                 }
                             }
                         }
-                        mainDialog.setGraphic(null);
+                        MAIN_DIALOG.setGraphic(null);
                         releaseNode();
                     }
                 });

@@ -1,6 +1,6 @@
 package com.english.repository;
 
-import com.english.javaBeans.Dictionary;
+import com.english.entity.Dictionary;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

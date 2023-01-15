@@ -21,7 +21,7 @@ public class FileUtils {
             inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(filePath);
         }
         if (inputStream == null) {
-            throw new RuntimeException("文件读取异常！filePath:" + filePath);
+            throw new RuntimeException("【ERROR】文件读取异常！filePath:" + filePath);
         }
         Properties properties = null;
         try {

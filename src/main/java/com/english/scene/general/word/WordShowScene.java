@@ -37,8 +37,8 @@ public class WordShowScene extends AbstractScene {
     @Override
     public void initData() {
         for (int i = 0; i < dataSize; i++) {
-            enListView.getItems().add(dictionaryList.get(i).getEn());
-            zhListView.getItems().add(dictionaryList.get(i).getZh());
+            enListView.getItems().add(DICTIONARY_LIST.get(i).getEn());
+            zhListView.getItems().add(DICTIONARY_LIST.get(i).getZh());
         }
     }
 
@@ -52,7 +52,6 @@ public class WordShowScene extends AbstractScene {
         exitButton.setOnAction(event -> {
             enListView.getItems().clear();
             zhListView.getItems().clear();
-            releaseNode();
             EnglishAppStart.convertScene("MainScene");
         });
     }
