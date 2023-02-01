@@ -144,7 +144,7 @@ public class MainScene extends AbstractScene {
                 VBox vBox = new VBox(16);
                 vBox.getChildren().addAll(inputCount, selectTimeBox);
 
-                addMainDialog("竞赛", 266, 166);
+                setMainDialog("竞赛", 266, 166);
                 MAIN_DIALOG.setGraphic(vBox);
                 MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
@@ -244,7 +244,7 @@ public class MainScene extends AbstractScene {
         wordReciteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                addMainDialog("背词", 266, 166);
+                setMainDialog("背词", 266, 166);
                 TextField inputNumber = new TextField();
                 inputNumber.setPrefWidth(88);
                 inputNumber.setPromptText("计划词数");
@@ -364,7 +364,7 @@ public class MainScene extends AbstractScene {
                 gridPane.add(zhText, 1, 6);
                 gridPane.add(inputZhText, 2, 6);
 
-                addMainDialog("导入数据", 866, 258);
+                setMainDialog("导入数据", 866, 258);
                 MAIN_DIALOG.setGraphic(gridPane);
                 MAIN_DIALOG.show();
                 MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {

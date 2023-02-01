@@ -99,7 +99,7 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
 
     public void gameEnd() {
         gameCountDownScheduledService.cancel();
-        addMainDialog("竞赛结束", 266, 166);
+        setMainDialog("竞赛结束", 266, 166);
         MAIN_DIALOG.setContentText("共 " + dataSize + " 道题\n" +
                 "您一共答对 " + correctCount + " 道题\n" +
                 "成绩为: " + (100 / dataSize) * correctCount);

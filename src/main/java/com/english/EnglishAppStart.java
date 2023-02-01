@@ -6,7 +6,6 @@ import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.reflections.Reflections;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import java.util.Set;
  * 4月8日 -- 将翻译功能实现图形界面化
  * 4月11日 -- 已实现并完善包括背词,挖词填空竞赛,单词慢览等的图形界面化
  */
-@SpringBootApplication
 public class EnglishAppStart extends Application {
     private static final Map<String, AbstractScene> SCENE_MAP;
     private static final Map<String, Class<? extends AbstractScene>> SCENE_CLASS_MAP;
@@ -42,20 +40,6 @@ public class EnglishAppStart extends Application {
             SCENE_MAP.put(sceneName, null);
         }
     }
-
-    public static void convertScene(String sceneName) {
-        AbstractScene scene;
-        if ((scene = SCENE_MAP.get(sceneName)) == null) {
-            Class<? extends AbstractScene> aClass = SCENE_CLASS_MAP.get(sceneName);
-            try {
-                scene = aClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        primaryStage.setScene(scene.run());
-    }
-
     public static void convertScene(String sceneName, Object... args) {
         AbstractScene scene;
         if ((scene = SCENE_MAP.get(sceneName)) == null) {
@@ -66,7 +50,11 @@ public class EnglishAppStart extends Application {
                 throw new RuntimeException(e);
             }
         }
-        primaryStage.setScene(scene.run(args));
+        if (args == null) {
+            primaryStage.setScene(scene.run());
+        } else {
+            primaryStage.setScene(scene.run(args));
+        }
     }
 
     public static void main(String[] args) {

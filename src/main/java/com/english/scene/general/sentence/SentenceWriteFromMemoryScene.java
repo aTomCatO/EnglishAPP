@@ -154,7 +154,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene {
 
     @Override
     public Scene run() {
-        addMainDialog("请看题", 366, 166);
+        setMainDialog("请看题", 366, 166);
         MAIN_DIALOG.setGraphic(questionLabel);
         return super.run();
     }

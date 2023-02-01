@@ -7,7 +7,6 @@ import com.english.service.CorpusService;
 import com.english.service.CorpusServiceImpl;
 import com.english.service.DictionaryService;
 import com.english.service.DictionaryServiceImpl;
-import com.sun.istack.internal.NotNull;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -62,21 +61,15 @@ public abstract class AbstractScene {
         this.bindEvent();
     }
 
-    public static void addMainDialog(String title, int width, int height) {
-        MAIN_DIALOG.setTitle(title);
-        MAIN_DIALOG.setWidth(width);
-        MAIN_DIALOG.setHeight(height);
+    /**
+     * 初始化场景界面
+     * 控件对象在这里创建
+     */
+    public void initScene() {
+        anchorPane = new AnchorPane();
+        anchorPane.setStyle("-fx-background-color: pink");
+        scene = new Scene(anchorPane);
     }
-
-    /**
-     * 初始化场景数据
-     */
-    public abstract void initData();
-
-    /**
-     * 为场景绑定事件
-     */
-    public abstract void bindEvent();
 
     public static List<Tab> addTab() {
         List<Tab> tabList = new ArrayList<>();
@@ -97,15 +90,12 @@ public abstract class AbstractScene {
         return tabList;
     }
 
-    /**
-     * 初始化场景界面
-     * 控件对象在这里创建
-     */
-    public void initScene() {
-        anchorPane = new AnchorPane();
-        anchorPane.setStyle("-fx-background-color: pink");
-        scene = new Scene(anchorPane);
+    public static void setMainDialog(String title, int width, int height) {
+        MAIN_DIALOG.setTitle(title);
+        MAIN_DIALOG.setWidth(width);
+        MAIN_DIALOG.setHeight(height);
     }
+
 
     public Scene run() {
         initData();
@@ -127,6 +117,11 @@ public abstract class AbstractScene {
             }
         });
     }
+
+    /**
+     * 为场景绑定事件
+     */
+    public abstract void bindEvent();
 
     public void addSceneHBox() {
         this.sceneHBox = new HBox(20);
@@ -156,13 +151,10 @@ public abstract class AbstractScene {
         AnchorPane.setRightAnchor(nextButton, 8.8);
     }
 
-    public Label getLabel(@NotNull int fontSize) {
-        Label label = new Label();
-        label.setWrapText(true);
-        label.setAlignment(Pos.CENTER);
-        label.setFont(Font.font(fontSize));
-        return label;
-    }
+    /**
+     * 初始化场景数据
+     */
+    public abstract void initData();
 
     public TextField getTextField(int width) {
         TextField textField = new TextField();
@@ -171,4 +163,11 @@ public abstract class AbstractScene {
         return textField;
     }
 
+    public Label getLabel(int fontSize) {
+        Label label = new Label();
+        label.setWrapText(true);
+        label.setAlignment(Pos.CENTER);
+        label.setFont(Font.font(fontSize));
+        return label;
+    }
 }

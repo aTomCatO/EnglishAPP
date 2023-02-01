@@ -52,7 +52,7 @@ public abstract class AbstractDao<T> implements BaseDao<T> {
                     statement.execute("use EnglishApp");
                     statement.execute("create table dictionary(en varchar(16) primary key comment '单词', zh varchar(66) comment '中文翻译')");
                     statement.execute("create table corpus(en varchar(16) comment '单词',enText text comment '例句',zhText text comment '中文翻译')");
-                    DictionaryServiceImpl.DICTIONARY_SERVICE.saveByFile("file/dictionary.txt");
+                    DictionaryServiceImpl.DICTIONARY_SERVICE.saveByFile("dataFile/dictionary.txt");
                 } catch (SQLException ex) {
                     System.out.println("[ERROR]: " + ex.getMessage());
                 }
