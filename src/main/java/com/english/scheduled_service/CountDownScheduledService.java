@@ -55,7 +55,7 @@ public class CountDownScheduledService extends ScheduledService<Integer> {
         };
     }
 
-    //public void start(AbstractScene scene) {
+    //public void atWork(AbstractScene scene) {
     //    Class<?>[] interfaces = scene.getClass().getInterfaces();
     //    for (Class<?> anInterface : interfaces) {
     //        if (anInterface.equals(CountDownSupport.class)) {
