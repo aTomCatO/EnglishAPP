@@ -1,6 +1,6 @@
 # EnglishAPP
 ### 介绍：
-EnglishApp是我大学期间学成JavaFx后的第一个自制的桌面程序。
+EnglishApp是我大学期间学成JavaFx后的一个自制桌面程序。
 
 ### 目前有以下功能：  
 1、中英互译，可以翻译词语和句子。  
