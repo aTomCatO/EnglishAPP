@@ -1,6 +1,7 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
+import com.english.Utils.StringUtils;
 import com.english.scene.AbstractScene;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,7 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +22,14 @@ import java.util.TreeSet;
  * @author XYC
  * 单词补全场景
  */
-public class CompleteWordByFillScene extends AbstractScene {
+public class CompleteWordByFillScene extends AbstractScene<Object> {
 
     protected static final List<TextField> TEXT_FIELD_LIST = new ArrayList<>();
     /**
      * fillChars 将挖去的字母存在字符数组中
      */
 
-    protected static char[] fillChars;
+    protected char[] fillChars;
     protected TextFlow enCurrentTextFlow;
     /**
      * 显示计时器的 label
@@ -59,13 +59,17 @@ public class CompleteWordByFillScene extends AbstractScene {
     }
 
     @Override
-    public void initData() {
+    public Object doCall() {
         dataSize = 20;
+        dataIndex = RANDOM.nextInt(dataSize);
         DICTIONARY_LIST.clear();
         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
-        dataIndex = RANDOM.nextInt(dataSize);
+        return null;
+    }
+
+    @Override
+    public void updateUI(Object value) {
         fillImplement();
-        zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
     }
 
     @Override
@@ -96,8 +100,6 @@ public class CompleteWordByFillScene extends AbstractScene {
                 //再更新为新单词的索引
                 dataIndex = RANDOM.nextInt(dataSize);
                 fillImplement();
-                zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
-
                 TEXT_FIELD_LIST.get(0).requestFocus();
             }
         });
@@ -117,7 +119,7 @@ public class CompleteWordByFillScene extends AbstractScene {
         int beforeSize = TEXT_FIELD_LIST.size();
 
         String en = DICTIONARY_LIST.get(dataIndex).getEn();
-        System.out.println(en);
+        LOGGER.info(en);
         char[] enChars = en.toCharArray();
         int enLength = enChars.length;
         int fillCount = enLength / 2;
@@ -162,6 +164,7 @@ public class CompleteWordByFillScene extends AbstractScene {
         if (afterSize > beforeSize) {
             textFieldRequestFocus(beforeSize);
         }
+        zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
     }
 
     /**
@@ -187,7 +190,7 @@ public class CompleteWordByFillScene extends AbstractScene {
             textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    //System.out.println(event.getCode().getName());
+                    //LOGGER.info(event.getCode().getName());
                     switch (event.getCode().getName()) {
                         case "Left": {
                             //如果当前焦点在第一个输入框,键盘点击向左箭头 ⬅ ,焦点就会给到最后一个输入框

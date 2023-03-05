@@ -70,16 +70,19 @@ public class WordBrowseScene extends AbstractScene {
     }
 
     @Override
-    public void initData() {
-        dataSize = 30;
+    public Object doCall() {
         dataIndex = 0;
+        dataSize = 30;
         DICTIONARY_LIST.clear();
         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
+        return null;
+    }
 
+    @Override
+    public void updateUI(Object value) {
         enCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
         zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
     }
-
 
     @Override
     public void bindEvent() {

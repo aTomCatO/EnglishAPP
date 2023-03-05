@@ -1,6 +1,7 @@
 package com.english.scene.general;
 
 import com.english.EnglishAppStart;
+import com.english.Utils.StringUtils;
 import com.english.entity.Corpus;
 import com.english.entity.Dictionary;
 import com.english.scene.AbstractScene;
@@ -16,7 +17,6 @@ import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.Data;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.List;
  * 主场景
  */
 @Data
-public class MainScene extends AbstractScene {
+public class MainScene extends AbstractScene<Object> {
 
     private TextField search;
 
@@ -107,9 +107,15 @@ public class MainScene extends AbstractScene {
         AnchorPane.setTopAnchor(tabPane, 56.0);
     }
 
-    public void initData() {
+    @Override
+    public Object doCall() {
         DICTIONARY_LIST.clear();
         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandomAddCorpus(6));
+        return null;
+    }
+
+    @Override
+    public void updateUI(Object value) {
         tabPane.getTabs().clear();
         tabPane.getTabs().addAll(addTab());
     }
@@ -149,7 +155,7 @@ public class MainScene extends AbstractScene {
                 MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
                     @Override
                     public void handle(DialogEvent dialogEvent) {
-                        //System.out.println(MAIN_DIALOG.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE);
+                        //LOGGER.info(MAIN_DIALOG.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE);
                         if (MAIN_DIALOG.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
                             String count = inputCount.getText();
                             if (!count.matches("([1-9]{1}[\\d]*)$")) {
@@ -190,11 +196,9 @@ public class MainScene extends AbstractScene {
                 }
             }
         };
-
         inputEvent();
         inputDictionaryFileEvent();
         inputCorpusFileEvent();
-
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.english.scene.game;
 
 import com.english.EnglishAppStart;
+import com.english.concurrent.CountDownHandler;
 import com.english.scene.AbstractScene;
-import com.english.scheduled_service.CountDownScheduledService;
 import javafx.event.EventHandler;
 import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
@@ -10,8 +10,8 @@ import javafx.scene.control.Label;
 /**
  * @author XYC
  */
-public abstract class AbstractGameScene extends AbstractScene implements CountDownScheduledService.CountDownSupport {
-    protected CountDownScheduledService gameCountDownScheduledService;
+public abstract class AbstractGameScene extends AbstractScene<Object> implements CountDownHandler.CountDownSupport {
+    protected CountDownHandler gameCountDownHandler;
     protected Integer gameDuration;
     protected Integer correctCount;
 
@@ -21,7 +21,7 @@ public abstract class AbstractGameScene extends AbstractScene implements CountDo
     protected Label countDownLabel;
 
     public void gameEnd() {
-        gameCountDownScheduledService.cancel();
+        gameCountDownHandler.cancel();
         setMainDialog("竞赛结束", 266, 166);
         MAIN_DIALOG.setContentText("共 " + dataSize + " 道题\n" +
                 "您一共答对 " + correctCount + " 道题\n" +

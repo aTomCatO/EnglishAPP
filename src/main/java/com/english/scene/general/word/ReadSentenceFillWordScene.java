@@ -17,11 +17,12 @@ import java.util.regex.Pattern;
  * @author XYC
  * 读句填词场景
  */
-public class ReadSentenceFillWordScene extends AbstractScene {
+public class ReadSentenceFillWordScene extends AbstractScene<Object> {
     private Label enLabel;
     private Label zhTextLabel;
 
     private TextFlow enTextFlow;
+
     @Override
     public void initScene() {
         super.initScene();
@@ -39,16 +40,19 @@ public class ReadSentenceFillWordScene extends AbstractScene {
         sceneVBox.getChildren().addAll(enLabel, enTextFlow, zhTextLabel);
     }
 
-    public void initData() {
-        dataSize = 20;
+    @Override
+    public Object doCall() {
         dataIndex = 0;
+        dataSize = 20;
         CORPUS_LIST.clear();
         CORPUS_LIST.addAll(CORPUS_SERVICE.queryRandom(dataSize));
-
-        zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
-        updateQuestion();
+        return null;
     }
 
+    @Override
+    public void updateUI(Object value) {
+        updateQuestion();
+    }
 
     @Override
     public void bindEvent() {
@@ -90,7 +94,6 @@ public class ReadSentenceFillWordScene extends AbstractScene {
                 enTextFlow.getChildren().clear();
                 enLabel.setText(null);
                 dataIndex += 1;
-                zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
                 updateQuestion();
             } else {
                 enLabel.setText(en);
@@ -100,15 +103,14 @@ public class ReadSentenceFillWordScene extends AbstractScene {
 
 
     public void updateQuestion() {
+        zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
         String en = CORPUS_LIST.get(dataIndex).getEn();
         String enText = CORPUS_LIST.get(dataIndex).getEnText();
         Pattern pattern = Pattern.compile("(?i)" + en + "[a-z]*");
         Matcher matcher = pattern.matcher(enText);
-        int textFieldIndex = 0;
-        int labelIndex = 0;
         while (matcher.find()) {
             String matchedEn = matcher.group();
-            System.out.println(matchedEn);
+            LOGGER.info(matchedEn);
             int beginIndex = enText.indexOf(matchedEn);
             int endIndex = beginIndex + matchedEn.length();
             TextField textField = getTextField(78);

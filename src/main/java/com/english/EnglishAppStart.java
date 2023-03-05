@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.reflections.Reflections;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,13 +41,15 @@ public class EnglishAppStart extends Application {
             SCENE_MAP.put(sceneName, null);
         }
     }
+
     public static void convertScene(String sceneName, Object... args) {
         AbstractScene scene;
         if ((scene = SCENE_MAP.get(sceneName)) == null) {
             Class<? extends AbstractScene> aClass = SCENE_CLASS_MAP.get(sceneName);
             try {
-                scene = aClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
+                scene = aClass.getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -62,12 +65,6 @@ public class EnglishAppStart extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
-        super.stop();
-        BaseService.THREAD_POOL.shutdownNow();
-    }
-
-    @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         primaryStage.setAlwaysOnTop(true);
@@ -78,8 +75,15 @@ public class EnglishAppStart extends Application {
         primaryStage.setWidth(388);
         primaryStage.setHeight(388);
         primaryStage.setTitle("englishApp");
-        primaryStage.getIcons().add(new Image("img/小熊.png"));
+        primaryStage.getIcons().add(new Image("D:\\JavaWorld\\Demo\\EnglishApp\\src\\main\\resources\\img\\小熊.png"));
+        // Objects.requireNonNull(EnglishAppStart.class.getClassLoader().getResourceAsStream("img/小熊.png"))
         primaryStage.show();
         convertScene("MainScene");
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        BaseService.THREAD_POOL.shutdownNow();
     }
 }

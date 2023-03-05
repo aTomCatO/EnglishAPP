@@ -1,7 +1,7 @@
 package com.english.scene.game;
 
 import com.english.EnglishAppStart;
-import com.english.scheduled_service.CountDownScheduledService;
+import com.english.concurrent.CountDownHandler;
 import com.english.service.BaseService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -52,7 +52,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         addExitButton();
         addSceneVBox();
 
-        gameCountDownScheduledService = CountDownScheduledService.getScheduledService();
+        gameCountDownHandler = CountDownHandler.getCountDownHandler();
 
         enPreviousLabel = new Label();
         enCurrentLabel = new Label();
@@ -60,7 +60,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         zhSelectLabel2 = new Label();
         zhSelectLabel3 = new Label();
         zhSelectLabel4 = new Label();
-        countDownLabel = gameCountDownScheduledService.getCountDownLabel();
+        countDownLabel = gameCountDownHandler.getCountDownLabel();
 
         this.anchorPane.getChildren().add(countDownLabel);
         AnchorPane.setTopAnchor(countDownLabel, 8.8);
@@ -93,11 +93,16 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
     }
 
     @Override
-    public void initData() {
+    public Object doCall() {
         dataIndex = 0;
         correctCount = 0;
         DICTIONARY_LIST.clear();
         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
+        return null;
+    }
+
+    @Override
+    public void updateUI(Object value) {
         updateQuestion();
     }
 
@@ -105,7 +110,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         String en = DICTIONARY_LIST.get(dataIndex).getEn();
         String zh = DICTIONARY_LIST.get(dataIndex).getZh();
         enCurrentLabel.setText(en);
-        System.out.println(zh);
+        LOGGER.info(zh);
 
         int zhAccurateLabelIndex = RANDOM.nextInt(4) + 1;
         TreeSet<Integer> wrongIndexSet = generateWrongIndex();
@@ -172,7 +177,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
             @Override
             public void handle(ActionEvent event) {
                 updateUiTask.cancel();
-                gameCountDownScheduledService.cancel();
+                gameCountDownHandler.cancel();
                 enPreviousLabel.setText(null);
                 EnglishAppStart.convertScene("MainScene");
             }
@@ -226,9 +231,9 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         gameDuration = (Integer) args[0];
         initData();
         doPressed = true;
-        gameCountDownScheduledService.setCountDownSupport(this);
-        gameCountDownScheduledService.setTime(gameDuration);
-        gameCountDownScheduledService.restart();
+        gameCountDownHandler.setCountDownSupport(this);
+        gameCountDownHandler.setTime(gameDuration);
+        gameCountDownHandler.restart();
         return scene;
     }
 

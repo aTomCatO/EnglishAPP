@@ -1,8 +1,8 @@
 package com.english.scene.game;
 
 import com.english.EnglishAppStart;
+import com.english.concurrent.CountDownHandler;
 import com.english.scene.general.word.CompleteWordByFillScene;
-import com.english.scheduled_service.CountDownScheduledService;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -15,8 +15,8 @@ import javafx.scene.layout.AnchorPane;
 /**
  * @author XYC
  */
-public class CompleteWordByFillGameScene extends CompleteWordByFillScene implements CountDownScheduledService.CountDownSupport {
-    protected CountDownScheduledService gameCountDownScheduledService;
+public class CompleteWordByFillGameScene extends CompleteWordByFillScene implements CountDownHandler.CountDownSupport {
+    protected CountDownHandler gameCountDownHandler;
     protected Integer gameDuration;
     protected Integer correctCount;
     /**
@@ -28,8 +28,8 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
     public void initScene() {
         super.initScene();
 
-        gameCountDownScheduledService = CountDownScheduledService.getScheduledService();
-        countDownLabel = gameCountDownScheduledService.getCountDownLabel();
+        gameCountDownHandler = CountDownHandler.getCountDownHandler();
+        countDownLabel = gameCountDownHandler.getCountDownLabel();
 
         this.anchorPane.getChildren().add(countDownLabel);
         AnchorPane.setTopAnchor(countDownLabel, 8.8);
@@ -37,13 +37,12 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
     }
 
     @Override
-    public void initData() {
+    public Object doCall() {
         dataIndex = 0;
         correctCount = 0;
         DICTIONARY_LIST.clear();
         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
-        fillImplement();
-        zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
+        return null;
     }
 
     @Override
@@ -57,7 +56,7 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gameCountDownScheduledService.cancel();
+                gameCountDownHandler.cancel();
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
                 EnglishAppStart.convertScene("MainScene");
@@ -98,7 +97,7 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
     }
 
     public void gameEnd() {
-        gameCountDownScheduledService.cancel();
+        gameCountDownHandler.cancel();
         setMainDialog("竞赛结束", 266, 166);
         MAIN_DIALOG.setContentText("共 " + dataSize + " 道题\n" +
                 "您一共答对 " + correctCount + " 道题\n" +
@@ -121,9 +120,9 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
     @Override
     public Scene run(Object... args) {
         this.gameDuration = (Integer) args[0];
-        gameCountDownScheduledService.setCountDownSupport(this);
-        gameCountDownScheduledService.setTime(gameDuration);
-        gameCountDownScheduledService.restart();
+        gameCountDownHandler.setCountDownSupport(this);
+        gameCountDownHandler.setTime(gameDuration);
+        gameCountDownHandler.restart();
         initData();
         return scene;
     }

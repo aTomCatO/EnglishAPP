@@ -1,4 +1,4 @@
-package com.english.scheduled_service;
+package com.english.concurrent;
 
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
@@ -9,28 +9,24 @@ import lombok.Data;
 
 /**
  * @author XYC
- * 竞赛场景倒计时
+ * 倒计时处理器
  */
 @Data
-public class CountDownScheduledService extends ScheduledService<Integer> {
-
-    private static CountDownScheduledService scheduledService;
+public class CountDownHandler extends ScheduledService<Integer> {
+    private static CountDownHandler scheduledService;
     private Integer time;
     private Label countDownLabel;
-
     private CountDownSupport countDownSupport;
 
-
-    private CountDownScheduledService() {
+    private CountDownHandler() {
         this.countDownLabel = new Label();
         countDownLabel.setFont(Font.font(13));
         setPeriod(Duration.seconds(1));
     }
 
-
-    public static CountDownScheduledService getScheduledService() {
+    public static CountDownHandler getScheduledService() {
         if (scheduledService == null) {
-            scheduledService = new CountDownScheduledService();
+            scheduledService = new CountDownHandler();
         }
         return scheduledService;
     }

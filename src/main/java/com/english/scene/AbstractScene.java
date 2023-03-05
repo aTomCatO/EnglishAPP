@@ -1,8 +1,10 @@
 package com.english.scene;
 
 import com.english.EnglishAppStart;
+import com.english.concurrent.ServiceFunctionHandler;
 import com.english.entity.Corpus;
 import com.english.entity.Dictionary;
+import com.english.function.ServiceFunction;
 import com.english.service.CorpusService;
 import com.english.service.CorpusServiceImpl;
 import com.english.service.DictionaryService;
@@ -16,6 +18,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * @author XYC
  */
-public abstract class AbstractScene {
+public abstract class AbstractScene<T> implements ServiceFunction<T> {
     protected static final DictionaryService DICTIONARY_SERVICE = DictionaryServiceImpl.DICTIONARY_SERVICE;
     protected static final CorpusService CORPUS_SERVICE = CorpusServiceImpl.CORPUS_SERVICE;
     public static final Pattern PATTERN = Pattern.compile("\\w+");
@@ -56,6 +60,9 @@ public abstract class AbstractScene {
     protected HBox sceneHBox;
     protected VBox sceneVBox;
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractScene.class);
+    private ServiceFunctionHandler<T> initDataHandler = new ServiceFunctionHandler<>(this);
+
     public AbstractScene() {
         this.initScene();
         this.bindEvent();
@@ -70,6 +77,18 @@ public abstract class AbstractScene {
         anchorPane.setStyle("-fx-background-color: pink");
         scene = new Scene(anchorPane);
     }
+
+    /**
+     * 初始化场景数据
+     */
+    public void initData() {
+        this.initDataHandler.restart();
+    }
+
+    /**
+     * 为场景绑定事件
+     */
+    public abstract void bindEvent();
 
     public static List<Tab> addTab() {
         List<Tab> tabList = new ArrayList<>();
@@ -118,10 +137,6 @@ public abstract class AbstractScene {
         });
     }
 
-    /**
-     * 为场景绑定事件
-     */
-    public abstract void bindEvent();
 
     public void addSceneHBox() {
         this.sceneHBox = new HBox(20);
@@ -150,11 +165,6 @@ public abstract class AbstractScene {
         AnchorPane.setBottomAnchor(nextButton, 8.8);
         AnchorPane.setRightAnchor(nextButton, 8.8);
     }
-
-    /**
-     * 初始化场景数据
-     */
-    public abstract void initData();
 
     public TextField getTextField(int width) {
         TextField textField = new TextField();

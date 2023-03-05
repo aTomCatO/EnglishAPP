@@ -21,7 +21,7 @@ import java.util.List;
  * @author XYC
  * 背词场景
  */
-public class WordReciteScene extends AbstractScene {
+public class WordReciteScene extends AbstractScene<Object> {
     private ListView<Corpus> listView;
     private Label enPreviousLabel;
     private Label enCurrentLabel;
@@ -52,21 +52,23 @@ public class WordReciteScene extends AbstractScene {
     }
 
     @Override
-    public void initData() {
+    public Object doCall() {
+        dataIndex = 0;
         DICTIONARY_LIST.clear();
         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandomAddCorpus(dataSize));
-        dataIndex = 0;
+        return null;
+    }
+
+    @Override
+    public void updateUI(Object value) {
         Dictionary dictionary = DICTIONARY_LIST.get(dataIndex);
         enCurrentLabel.setText(dictionary.getEn());
         zhLabel.setText(dictionary.getZh());
-
         List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
         if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
             listView.getItems().addAll(dictionaryCorpusList);
         }
-
     }
-
 
     @Override
     public void bindEvent() {
@@ -130,5 +132,4 @@ public class WordReciteScene extends AbstractScene {
             }
         });
     }
-
 }

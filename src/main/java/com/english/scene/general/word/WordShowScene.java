@@ -10,7 +10,7 @@ import javafx.scene.layout.FlowPane;
  * @author XYC
  * 单词展示场景
  */
-public class WordShowScene extends AbstractScene {
+public class WordShowScene extends AbstractScene<Object> {
     private FlowPane flowPane;
     private ListView<String> enListView;
     private ListView<String> zhListView;
@@ -40,6 +40,17 @@ public class WordShowScene extends AbstractScene {
             enListView.getItems().add(DICTIONARY_LIST.get(i).getEn());
             zhListView.getItems().add(DICTIONARY_LIST.get(i).getZh());
         }
+    }
+
+    @Override
+    public Object doCall() {
+
+        return null;
+    }
+
+    @Override
+    public void updateUI(Object value) {
+
     }
 
     @Override
