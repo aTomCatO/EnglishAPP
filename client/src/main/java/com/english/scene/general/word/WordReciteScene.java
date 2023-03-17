@@ -105,7 +105,7 @@ public class WordReciteScene extends AbstractScene<Object> {
                                 switch (selectedItem) {
                                     case "单词补全": {
                                         dataIndex = 0;
-                                        Client.convertScene("CompleteWordByFillScene");
+                                        Client.convertScene("com.english.scene.general.word.CompleteWordByFillScene");
                                         break;
                                     }
                                     case "重新背词": {
@@ -113,7 +113,7 @@ public class WordReciteScene extends AbstractScene<Object> {
                                         break;
                                     }
                                     default: {
-                                        Client.convertScene("MainScene");
+                                        Client.convertScene("com.english.scene.general.MainScene");
                                         break;
                                     }
                                 }

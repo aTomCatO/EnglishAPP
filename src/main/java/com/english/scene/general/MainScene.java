@@ -164,9 +164,9 @@ public class MainScene extends AbstractScene<Object> {
                             dataSize = Integer.parseInt(count);
                             Integer gameDuration = selectTimeBox.getValue() * 60;
                             if (eventTarget.getSource() == completeWordByFillGameButton) {
-                                EnglishAppStart.convertScene("CompleteWordByFillGameScene", gameDuration);
+                                EnglishAppStart.convertScene("com.english.scene.game.CompleteWordByFillGameScene", gameDuration);
                             } else if (eventTarget.getSource() == selectMeanByWordGameButton) {
-                                EnglishAppStart.convertScene("SelectMeanByWordGameScene", gameDuration);
+                                EnglishAppStart.convertScene("com.english.scene.game.SelectMeanByWordGameScene", gameDuration);
                             }
                         }
                         MAIN_DIALOG.setGraphic(null);
@@ -260,7 +260,7 @@ public class MainScene extends AbstractScene<Object> {
                             String numberText = inputNumber.getText();
                             if (numberText.matches("\\d+") || "0".equals(numberText)) {
                                 dataSize = Integer.parseInt(numberText);
-                                EnglishAppStart.convertScene("WordReciteScene");
+                                EnglishAppStart.convertScene("com.english.scene.general.word.WordReciteScene");
                             }
                         }
                         MAIN_DIALOG.setGraphic(null);
@@ -278,7 +278,7 @@ public class MainScene extends AbstractScene<Object> {
         wordBrowseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("WordBrowseScene");
+                EnglishAppStart.convertScene("com.english.scene.general.word.WordBrowseScene");
             }
         });
     }
@@ -290,7 +290,7 @@ public class MainScene extends AbstractScene<Object> {
         completeWordByFillButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("CompleteWordByFillScene");
+                EnglishAppStart.convertScene("com.english.scene.general.word.CompleteWordByFillScene");
             }
         });
     }
@@ -300,7 +300,7 @@ public class MainScene extends AbstractScene<Object> {
      */
     public void readSentenceFillWordEvent() {
         readSentenceFillWordButton.setOnAction((event) -> {
-            EnglishAppStart.convertScene("ReadSentenceFillWordScene");
+            EnglishAppStart.convertScene("com.english.scene.general.word.ReadSentenceFillWordScene");
         });
     }
 
@@ -327,7 +327,7 @@ public class MainScene extends AbstractScene<Object> {
         sentenceWriteFromMemory.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("SentenceWriteFromMemoryScene");
+                EnglishAppStart.convertScene("com.english.scene.general.sentence.SentenceWriteFromMemoryScene");
             }
         });
     }

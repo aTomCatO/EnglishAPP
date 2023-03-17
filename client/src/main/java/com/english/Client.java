@@ -5,13 +5,10 @@ import com.english.scene.AbstractScene;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author XYC
@@ -22,40 +19,18 @@ import java.util.Set;
  * 4月11日 -- 已实现并完善包括背词,挖词填空竞赛,单词慢览等的图形界面化
  */
 public class Client extends Application {
-    /**
-     * save scene instance
-     */
-    private static final Map<String, AbstractScene> SCENE_MAP;
-    /**
-     * save scene class
-     */
-    private static final Map<String, Class<? extends AbstractScene>> SCENE_CLASS_MAP;
+    private static final Map<String, AbstractScene<?>> SCENE_MAP = new HashMap<>();
     public static Stage primaryStage;
 
-    static {
-        Reflections reflections = new Reflections("com/english/scene");
-        Set<Class<? extends AbstractScene>> classes = reflections.getSubTypesOf(AbstractScene.class);
-        int sceneSize = classes.size();
-        SCENE_CLASS_MAP = new HashMap<>(sceneSize);
-        SCENE_MAP = new HashMap<>();
-        for (Class<? extends AbstractScene> aClass : classes) {
-            if (Modifier.isAbstract(aClass.getModifiers())) {
-                continue;
-            }
-            String sceneName = aClass.getSimpleName();
-            SCENE_CLASS_MAP.put(sceneName, aClass);
-            SCENE_MAP.put(sceneName, null);
-        }
-    }
-
     public static void convertScene(String sceneName, Object... args) {
-        AbstractScene scene;
+        AbstractScene<?> scene;
         if ((scene = SCENE_MAP.get(sceneName)) == null) {
-            Class<? extends AbstractScene> aClass = SCENE_CLASS_MAP.get(sceneName);
             try {
+                Class<? extends AbstractScene> aClass = Class.forName(sceneName).asSubclass(AbstractScene.class);
                 scene = aClass.getConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
-                     InvocationTargetException e) {
+                SCENE_MAP.put(sceneName, scene);
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                     InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -79,7 +54,7 @@ public class Client extends Application {
         primaryStage.setTitle("englishApp");
         primaryStage.getIcons().add(new Image("img/小熊.png"));
         primaryStage.show();
-        convertScene("MainScene");
+        convertScene("com.english.scene.general.MainScene");
     }
 
     @Override

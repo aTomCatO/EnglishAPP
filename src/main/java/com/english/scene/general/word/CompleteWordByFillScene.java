@@ -85,7 +85,7 @@ public class CompleteWordByFillScene extends AbstractScene<Object> {
             public void handle(ActionEvent event) {
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
-                EnglishAppStart.convertScene("MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }

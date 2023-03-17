@@ -7,15 +7,20 @@
     <!--        <groupId>xyc</groupId>-->
     <!--        <version>1.0-SNAPSHOT</version>-->
     <!--    </parent>-->
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>xyc</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>client</groupId>
     <artifactId>client</artifactId>
-
+    <version>1.0-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <dependencies>
         <!--        <dependency>-->
         <!--            <groupId>xyc</groupId>-->
-        <!--            <artifactId>EnglishApp</artifactId>-->
+        <!--            <artifactId>englishApp</artifactId>-->
         <!--            <version>1.0-SNAPSHOT</version>-->
         <!--            <scope>compile</scope>-->
         <!--        </dependency>-->
@@ -24,21 +29,17 @@
             <artifactId>javafx-controls</artifactId>
             <version>19</version>
         </dependency>
+        <!--        Netty-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.89.Final</version>
         </dependency>
+        <!--        lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
-        </dependency>
-        <!--        反射工具-->
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
         </dependency>
         <!--        json-->
         <dependency>
@@ -73,22 +74,4 @@
             <version>1.4.5</version>
         </dependency>
     </dependencies>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -149,9 +149,9 @@ public class MainScene extends AbstractScene<Object> {
                             dataSize = Integer.parseInt(count);
                             Integer gameDuration = selectTimeBox.getValue() * 60;
                             if (eventTarget.getSource() == completeWordByFillGameButton) {
-                                Client.convertScene("CompleteWordByFillGameScene", gameDuration);
+                                Client.convertScene("com.english.scene.game.CompleteWordByFillGameScene", gameDuration);
                             } else if (eventTarget.getSource() == selectMeanByWordGameButton) {
-                                Client.convertScene("SelectMeanByWordGameScene", gameDuration);
+                                Client.convertScene("com.english.scene.game.SelectMeanByWordGameScene", gameDuration);
                             }
                         }
                         MAIN_DIALOG.setGraphic(null);
@@ -224,7 +224,7 @@ public class MainScene extends AbstractScene<Object> {
                             String numberText = inputNumber.getText();
                             if (numberText.matches("\\d+") || "0".equals(numberText)) {
                                 dataSize = Integer.parseInt(numberText);
-                                Client.convertScene("WordReciteScene");
+                                Client.convertScene("com.english.scene.general.word.WordReciteScene");
                             }
                         }
                         MAIN_DIALOG.setGraphic(null);
@@ -242,7 +242,7 @@ public class MainScene extends AbstractScene<Object> {
         wordBrowseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Client.convertScene("WordBrowseScene");
+                Client.convertScene("com.english.scene.general.word.WordBrowseScene");
             }
         });
     }
@@ -254,7 +254,7 @@ public class MainScene extends AbstractScene<Object> {
         completeWordByFillButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Client.convertScene("CompleteWordByFillScene");
+                Client.convertScene("com.english.scene.general.word.CompleteWordByFillScene");
             }
         });
     }
@@ -264,7 +264,7 @@ public class MainScene extends AbstractScene<Object> {
      */
     public void readSentenceFillWordEvent() {
         readSentenceFillWordButton.setOnAction((event) -> {
-            Client.convertScene("ReadSentenceFillWordScene");
+            Client.convertScene("com.english.scene.general.word.ReadSentenceFillWordScene");
         });
     }
 
@@ -291,7 +291,7 @@ public class MainScene extends AbstractScene<Object> {
         sentenceWriteFromMemory.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Client.convertScene("SentenceWriteFromMemoryScene");
+                Client.convertScene("com.english.scene.general.sentence.SentenceWriteFromMemoryScene");
             }
         });
     }

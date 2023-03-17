@@ -59,7 +59,7 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
                 gameCountDownHandler.cancel();
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
-                EnglishAppStart.convertScene("MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }
@@ -106,7 +106,7 @@ public class CompleteWordByFillGameScene extends CompleteWordByFillScene impleme
             @Override
             public void handle(DialogEvent event) {
                 MAIN_DIALOG.setContentText(null);
-                EnglishAppStart.convertScene("WordShowScene");
+                EnglishAppStart.convertScene("com.english.scene.general.word.WordShowScene");
             }
         });
         MAIN_DIALOG.show();

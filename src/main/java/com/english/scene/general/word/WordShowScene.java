@@ -63,7 +63,7 @@ public class WordShowScene extends AbstractScene<Object> {
         exitButton.setOnAction(event -> {
             enListView.getItems().clear();
             zhListView.getItems().clear();
-            EnglishAppStart.convertScene("MainScene");
+            EnglishAppStart.convertScene("com.english.scene.general.MainScene");
         });
     }
 }

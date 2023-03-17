@@ -30,7 +30,7 @@ public abstract class AbstractGameScene extends AbstractScene<Object> implements
             @Override
             public void handle(DialogEvent event) {
                 MAIN_DIALOG.setContentText(null);
-                Client.convertScene("WordShowScene");
+                Client.convertScene("com.english.scene.general.word.WordShowScene");
             }
         });
         MAIN_DIALOG.show();

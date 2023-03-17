@@ -149,7 +149,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
             }
             MAIN_DIALOG.setGraphic(null);
             enTextLabel.setText(null);
-            EnglishAppStart.convertScene("MainScene");
+            EnglishAppStart.convertScene("com.english.scene.general.MainScene");
         });
     }
 

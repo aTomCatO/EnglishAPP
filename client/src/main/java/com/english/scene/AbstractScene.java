@@ -141,7 +141,7 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Client.convertScene("MainScene");
+                Client.convertScene("com.english.scene.general.MainScene");
             }
         });
     }

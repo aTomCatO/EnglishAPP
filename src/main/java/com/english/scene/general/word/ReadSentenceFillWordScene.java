@@ -66,7 +66,7 @@ public class ReadSentenceFillWordScene extends AbstractScene<Object> {
             @Override
             public void handle(ActionEvent event) {
                 enTextFlow.getChildren().clear();
-                EnglishAppStart.convertScene("MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }

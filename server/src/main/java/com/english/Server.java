@@ -1,7 +1,6 @@
 package com.english;
 
 import com.english.Utils.FileUtils;
-import com.english.netty.SessionManager;
 import com.english.netty.handler.ClientConnectHandler;
 import com.english.netty.handler.MessageContentHandler;
 import com.english.netty.handler.MessageHandler;
@@ -26,7 +25,7 @@ import java.util.Properties;
 public class Server {
     public static final NioEventLoopGroup BOSS_GROUP = new NioEventLoopGroup();
     public static final NioEventLoopGroup WORKER_GROUP = new NioEventLoopGroup();
-    public static final SessionManager SESSION_MANAGER = new SessionManager();
+    // public static final SessionManager SESSION_MANAGER = new SessionManager();
     private static final ServerBootstrap SERVER_BOOTSTRAP =
             new ServerBootstrap()
                     .group(BOSS_GROUP, WORKER_GROUP)

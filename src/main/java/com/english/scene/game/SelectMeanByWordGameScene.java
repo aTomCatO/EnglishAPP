@@ -179,7 +179,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
                 updateUiTask.cancel();
                 gameCountDownHandler.cancel();
                 enPreviousLabel.setText(null);
-                EnglishAppStart.convertScene("MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }
