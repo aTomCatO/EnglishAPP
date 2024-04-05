@@ -1,6 +1,7 @@
 package com.english.service;
 
 import com.english.Utils.FileUtils;
+import com.english.Utils.InstanceUtils;
 import com.english.Utils.StringUtils;
 import com.english.baidutrans.TransUtil;
 import com.english.entity.Corpus;
@@ -90,7 +91,7 @@ public class CorpusServiceImpl implements CorpusService {
                 f2.set(corpus, transResult);
             }
         } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
-            throw new RuntimeException(e);
+            InstanceUtils.LOGGER.error(e.getMessage());
         }
         return corpus;
     }

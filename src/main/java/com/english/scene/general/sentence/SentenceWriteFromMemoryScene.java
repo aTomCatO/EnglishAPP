@@ -1,6 +1,7 @@
 package com.english.scene.general.sentence;
 
 import com.english.EnglishAppStart;
+import com.english.Utils.InstanceUtils;
 import com.english.Utils.StringUtils;
 import com.english.scene.AbstractScene;
 import com.english.service.BaseService;
@@ -24,23 +25,16 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
      * 计时关闭弹窗任务
      */
     private Task<Boolean> timedCloseDialogTask;
-    private Label enTextLabel;
-    private Label zhTextLabel;
-    private TextArea inputTextArea;
-    private Label correctRateLabel;
+    private static final Label enTextLabel = getLabel(13);
+    private static final Label zhTextLabel = getLabel(13);
+    private static final TextArea inputTextArea = new TextArea();
+    private static final Label correctRateLabel = getLabel(16);
+    private static final Label questionLabel = getLabel(13);
     private Integer correctCount;
-
-    private Label questionLabel;
 
     @Override
     public void initScene() {
         super.initScene();
-        enTextLabel = getLabel(13);
-        zhTextLabel = getLabel(13);
-        correctRateLabel = getLabel(16);
-        questionLabel = getLabel(13);
-
-        inputTextArea = new TextArea();
         inputTextArea.setWrapText(true);
         inputTextArea.setFont(Font.font(16));
         inputTextArea.setPrefHeight(66);
@@ -73,10 +67,10 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
 
     public void updateQuestion() {
         String enText = CORPUS_LIST.get(dataIndex).getEnText();
-        LOGGER.info(enText);
-        questionLabel.setText(CORPUS_LIST.get(dataIndex).getEnText());
+        InstanceUtils.LOGGER.info(enText);
+        questionLabel.setText(enText);
         zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
-        MAIN_DIALOG.show();
+        DIALOG.show();
 
         timedCloseDialogTask = new Task<Boolean>() {
             @Override
@@ -87,7 +81,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
 
             @Override
             protected void updateValue(Boolean open) {
-                MAIN_DIALOG.close();
+                DIALOG.close();
             }
         };
         BaseService.THREAD_POOL.execute(timedCloseDialogTask);
@@ -102,12 +96,13 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
     public void nextButtonEvent() {
         nextButton.setOnAction(new EventHandler<ActionEvent>() {
             int wordCount = 0;
+
             @Override
             public void handle(ActionEvent event) {
                 String inputText = inputTextArea.getText();
                 String enSentence = CORPUS_LIST.get(dataIndex).getEnText();
                 if (StringUtils.hasText(inputText)) {
-                    //分别从语句中匹配每一个词
+                    // 分别从语句中匹配每一个词
                     Matcher matcherCorrectSentence = PATTERN.matcher(enSentence);
                     Matcher matcherInputSentence = PATTERN.matcher(inputText);
                     while (matcherCorrectSentence.find()) {
@@ -120,7 +115,11 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
                         matcherInputSentence.reset();
                     }
                     if (correctCount < wordCount) {
-                        correctRateLabel.setText("正确率: " + ((double) correctCount / wordCount) * 100 + "%");
+                        // 在Java中会进行整数除法，会导致结果小数部分被截断。为了避免这个问题，应将至少一个操作数转换为浮点数，以便进行浮点除法。
+                        // 最后将结果使用 String.format 来格式化输出:
+                        // 1、结果保留两位小数: %.2f%  (double) correctCount / wordCount * 100
+                        // 2、结果不保留小数位: %d%    (int)((double) correctCount / wordCount * 100) // 将浮点数转换为整数，去掉小数部分
+                        correctRateLabel.setText(String.format("正确率: %d%%", (int) ((double) correctCount / wordCount * 100)));
                         enTextLabel.setText(enSentence);
                     } else {
                         enTextLabel.setText(enSentence);
@@ -128,7 +127,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
                         correctRateLabel.setText(null);
                         dataIndex += 1;
                         if (dataIndex == dataSize) {
-                            initData();
+                            doCall();
                         }
                         updateQuestion();
                     }
@@ -147,17 +146,17 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
             if (timedCloseDialogTask != null) {
                 timedCloseDialogTask.cancel();
             }
-            MAIN_DIALOG.setGraphic(null);
             enTextLabel.setText(null);
-            EnglishAppStart.convertScene("com.english.scene.general.MainScene");
+            DIALOG.setGraphic(null);
+            EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
         });
     }
 
 
     @Override
     public Scene run() {
-        setMainDialog("请看题", 366, 166);
-        MAIN_DIALOG.setGraphic(questionLabel);
+        setDialog("请看题", 366, 166);
+        DIALOG.setGraphic(questionLabel);
         return super.run();
     }
 

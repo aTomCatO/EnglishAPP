@@ -17,8 +17,8 @@
     <!-- 日志文件大小 -->
     <property name="log.max.size" value="500MB"/>
     <!--    <property name="log.pattern" value="%level %yellow(%date{yyyy-MM-dd HH:mm:ss:SSS}) %green([%thread]) %logger{56}.%method:%L - %msg%n"/>-->
-    <property name="log.pattern" value="%date{mm:ss:SSS} %green([%thread]) - %m%n"/>
-    <property name="log.charset" value="UTF-8"/>
+    <property name="log.pattern" value="%date{mm:ss:SSS} %green([%thread]) %method:%L - %msg%n"/>
+    <property name="log.charset" value="GBK"/>
 
     <!--控制台输出 -->
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
@@ -93,10 +93,12 @@
         <level value="info"/>
         <appender-ref ref="stdout"/>
     </logger>
+
+
     <root level="info">
         <appender-ref ref="stdout"/>
-        <appender-ref ref="infoFile"/>
-        <appender-ref ref="warnFile"/>
-        <appender-ref ref="errorFile"/>
+        <!--        <appender-ref ref="infoFile"/>-->
+        <!--        <appender-ref ref="warnFile"/>-->
+        <!--        <appender-ref ref="errorFile"/>-->
     </root>
 </configuration>

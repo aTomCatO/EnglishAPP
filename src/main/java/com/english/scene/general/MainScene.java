@@ -3,13 +3,13 @@ package com.english.scene.general;
 import com.english.EnglishAppStart;
 import com.english.Utils.StringUtils;
 import com.english.entity.Corpus;
-import com.english.entity.Dictionary;
 import com.english.scene.AbstractScene;
+import com.english.scene.event.GameEventHandler;
+import com.english.scene.event.InputDataEventHandler;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -28,69 +28,62 @@ import java.util.List;
  */
 @Data
 public class MainScene extends AbstractScene<Object> {
+    private static final TextField search = new TextField();
 
-    private TextField search;
+    private static final Button searchButton = new Button("查词");
 
-    private Button searchButton;
+    private static final MenuBar functionBar = new MenuBar();
+    private static final Menu functionMenu = new Menu("功能");
 
-    private MenuBar functionBar;
-    private Menu functionMenu;
+    private static final Menu wordFunction = new Menu("单词训练");
+    private static final MenuItem wordReciteButton = new MenuItem("单词背诵");
+    private static final MenuItem wordBrowseButton = new MenuItem("单词浏览");
+    private static final MenuItem wordCompletionButton = new MenuItem("单词补全");
+    private static final MenuItem readSentenceFillWordButton = new MenuItem("读句填词");
 
-    private Menu wordFunction;
-    private MenuItem wordReciteButton;
-    private MenuItem wordBrowseButton;
-    private MenuItem completeWordByFillButton;
-    private MenuItem readSentenceFillWordButton;
+    private static final Menu sentenceFunction = new Menu("语句训练");
+    private static final MenuItem sentenceWriteFromMemory = new MenuItem("语句默写");
+    private static final Menu gameFunction = new Menu("竞赛");
+    private static final MenuItem wordCompletionGameButton = new MenuItem("单词补全竞赛");
+    private static final MenuItem wordMeaningSelectionButton = new MenuItem("单词选义竞赛");
+    private static final Menu saveFunction = new Menu("导入数据");
+    private static final MenuItem inputButton = new MenuItem("导入");
+    private static final MenuItem importDictionaryFileButton = new MenuItem("导入词典");
+    private static final MenuItem importCorpusFileButton = new MenuItem("导入文集");
+    private static final TabPane tabPane = new TabPane();
+    private static final EventHandler<Event> importFileHandler = new EventHandler<Event>() {
+        @Override
+        public void handle(Event event) {
+            Stage stage = new Stage();
+            List<String> filters = new ArrayList<>();
+            filters.add("*.txt");
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("词典文件", filters));
+            File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+                if (event.getSource() == importDictionaryFileButton) {
+                    DICTIONARY_SERVICE.saveByFile(file.getAbsolutePath());
+                } else if (event.getSource() == importCorpusFileButton) {
+                    CORPUS_SERVICE.saveByFile(file.getAbsolutePath());
+                }
+            }
+        }
+    };
 
-    private Menu sentenceFunction;
-    private MenuItem sentenceWriteFromMemory;
-    private Menu gameFunction;
-    private MenuItem completeWordByFillGameButton;
-    private MenuItem selectMeanByWordGameButton;
-    private Menu saveFunction;
-    private MenuItem inputButton;
-    private MenuItem inputDictionaryFileButton;
-    private MenuItem inputCorpusFileButton;
-    private TabPane tabPane;
-    private EventHandler<Event> gameEventHandler;
-    private EventHandler<Event> inputFileHandler;
     @Override
     public void initScene() {
         super.initScene();
-
-        //进行场景基本组件实例化
-        search = new TextField();
         search.setPrefWidth(136);
-        searchButton = new Button("查词");
-        functionBar = new MenuBar();
-        functionMenu = new Menu("功能");
 
-        wordFunction = new Menu("单词训练");
-        wordReciteButton = new MenuItem("单词背诵");
-        wordBrowseButton = new MenuItem("单词浏览");
-        completeWordByFillButton = new MenuItem("单词补全");
-        readSentenceFillWordButton = new MenuItem("读句填词");
-
-        sentenceFunction = new Menu("语句训练");
-        sentenceWriteFromMemory = new MenuItem("语句默写");
-
-        gameFunction = new Menu("竞赛");
-        completeWordByFillGameButton = new MenuItem("单词补全竞赛");
-        selectMeanByWordGameButton = new MenuItem("单词选义竞赛");
-
-        saveFunction = new Menu("导入数据");
-        inputButton = new MenuItem("导入");
-        inputDictionaryFileButton = new MenuItem("导入词典");
-        inputCorpusFileButton = new MenuItem("导入文集");
-
-        tabPane = new TabPane();
+        wordCompletionGameButton.setUserData("com.english.scene.game.WordCompletionGameScene");
+        wordMeaningSelectionButton.setUserData("com.english.scene.game.WordMeaningSelectionGameScene");
 
         functionBar.setStyle("-fx-background-color: #93dc49");
         functionBar.getMenus().add(functionMenu);
-        wordFunction.getItems().addAll(wordReciteButton, wordBrowseButton, completeWordByFillButton, readSentenceFillWordButton);
+        wordFunction.getItems().addAll(wordReciteButton, wordBrowseButton, wordCompletionButton, readSentenceFillWordButton);
         sentenceFunction.getItems().addAll(sentenceWriteFromMemory);
-        gameFunction.getItems().addAll(completeWordByFillGameButton, selectMeanByWordGameButton);
-        saveFunction.getItems().addAll(inputButton, inputDictionaryFileButton, inputCorpusFileButton);
+        gameFunction.getItems().addAll(wordCompletionGameButton, wordMeaningSelectionButton);
+        saveFunction.getItems().addAll(inputButton, importDictionaryFileButton, importCorpusFileButton);
         functionMenu.getItems().addAll(wordFunction, sentenceFunction, gameFunction, saveFunction);
 
         addSceneHBox();
@@ -124,81 +117,17 @@ public class MainScene extends AbstractScene<Object> {
         searchEvent();
         wordReciteEvent();
         wordBrowseEvent();
-        completeWordByFillEvent();
+        wordCompletionEvent();
         readSentenceFillWordEvent();
 
         sentenceWriteFromMemoryEvent();
 
-        gameEventHandler = new EventHandler<Event>() {
-            @Override
-            public void handle(Event eventTarget) {
-                //自定义竞赛时长
-                List<Integer> items = new ArrayList<>();
-                for (int i = 1; i < 7; i++) {
-                    items.add(i);
-                }
-                ChoiceBox<Integer> selectTimeBox = new ChoiceBox<>();
-                selectTimeBox.getItems().addAll(items);
-                selectTimeBox.setValue(1);
+        wordCompletionGameEvent();
+        wordMeaningSelectionGameEvent();
 
-                //自定义竞赛词数
-                TextField inputCount = new TextField();
-                inputCount.setPrefWidth(88);
-                inputCount.setPromptText("计划词数");
-                inputCount.setText("10");
-
-                VBox vBox = new VBox(16);
-                vBox.getChildren().addAll(inputCount, selectTimeBox);
-
-                setMainDialog("竞赛", 266, 166);
-                MAIN_DIALOG.setGraphic(vBox);
-                MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
-                    @Override
-                    public void handle(DialogEvent dialogEvent) {
-                        //LOGGER.info(MAIN_DIALOG.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE);
-                        if (MAIN_DIALOG.getResult().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                            String count = inputCount.getText();
-                            if (!count.matches("([1-9]{1}[\\d]*)$")) {
-                                return;
-                            }
-                            dataSize = Integer.parseInt(count);
-                            Integer gameDuration = selectTimeBox.getValue() * 60;
-                            if (eventTarget.getSource() == completeWordByFillGameButton) {
-                                EnglishAppStart.convertScene("com.english.scene.game.CompleteWordByFillGameScene", gameDuration);
-                            } else if (eventTarget.getSource() == selectMeanByWordGameButton) {
-                                EnglishAppStart.convertScene("com.english.scene.game.SelectMeanByWordGameScene", gameDuration);
-                            }
-                        }
-                        MAIN_DIALOG.setGraphic(null);
-                    }
-                });
-                MAIN_DIALOG.show();
-            }
-        };
-        completeWordByFillGameEvent();
-        selectMeanByWordGameEvent();
-
-        inputFileHandler = new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                Stage stage = new Stage();
-                List<String> filters = new ArrayList<>();
-                filters.add("*.txt");
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("词典文件", filters));
-                File file = fileChooser.showOpenDialog(stage);
-                if (file != null) {
-                    if (event.getSource() == inputDictionaryFileButton) {
-                        DICTIONARY_SERVICE.saveByFile(file.getAbsolutePath());
-                    } else if (event.getSource() == inputCorpusFileButton) {
-                        CORPUS_SERVICE.saveByFile(file.getAbsolutePath());
-                    }
-                }
-            }
-        };
-        inputEvent();
-        inputDictionaryFileEvent();
-        inputCorpusFileEvent();
+        importEvent();
+        importDictionaryFileEvent();
+        importCorpusFileEvent();
     }
 
     /**
@@ -248,25 +177,25 @@ public class MainScene extends AbstractScene<Object> {
         wordReciteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                setMainDialog("背词", 266, 166);
+                setDialog("背词", 266, 166);
                 TextField inputNumber = new TextField();
                 inputNumber.setPrefWidth(88);
                 inputNumber.setPromptText("计划词数");
-                MAIN_DIALOG.setGraphic(inputNumber);
-                MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
+                DIALOG.setGraphic(inputNumber);
+                DIALOG_OK.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
-                    public void handle(DialogEvent event) {
-                        if (MAIN_DIALOG.getResult().getButtonData().isDefaultButton()) {
-                            String numberText = inputNumber.getText();
-                            if (numberText.matches("\\d+") || "0".equals(numberText)) {
-                                dataSize = Integer.parseInt(numberText);
-                                EnglishAppStart.convertScene("com.english.scene.general.word.WordReciteScene");
-                            }
+                    public void handle(ActionEvent event) {
+                        String numberText = inputNumber.getText();
+                        // 匹配是否是不为 0 开头的数字
+                        if (numberText.matches("^[1-9]\\d*$")) {
+                            dataSize = Integer.parseInt(numberText);
+                            EnglishAppStart.sceneChanger("com.english.scene.general.word.WordReciteScene");
                         }
-                        MAIN_DIALOG.setGraphic(null);
+                        DIALOG_OK.setOnAction(null);
+                        DIALOG.setGraphic(null);
                     }
                 });
-                MAIN_DIALOG.show();
+                DIALOG.show();
             }
         });
     }
@@ -278,7 +207,7 @@ public class MainScene extends AbstractScene<Object> {
         wordBrowseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("com.english.scene.general.word.WordBrowseScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.word.WordBrowseScene");
             }
         });
     }
@@ -286,11 +215,11 @@ public class MainScene extends AbstractScene<Object> {
     /**
      * 单词补全事件
      */
-    public void completeWordByFillEvent() {
-        completeWordByFillButton.setOnAction(new EventHandler<ActionEvent>() {
+    public void wordCompletionEvent() {
+        wordCompletionButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("com.english.scene.general.word.CompleteWordByFillScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.word.WordCompletionScene");
             }
         });
     }
@@ -300,7 +229,7 @@ public class MainScene extends AbstractScene<Object> {
      */
     public void readSentenceFillWordEvent() {
         readSentenceFillWordButton.setOnAction((event) -> {
-            EnglishAppStart.convertScene("com.english.scene.general.word.ReadSentenceFillWordScene");
+            EnglishAppStart.sceneChanger("com.english.scene.general.word.ReadSentenceFillWordScene");
         });
     }
 
@@ -308,16 +237,15 @@ public class MainScene extends AbstractScene<Object> {
     /**
      * 单词补全竞赛事件
      */
-    private void completeWordByFillGameEvent() {
-        completeWordByFillGameButton.setOnAction(gameEventHandler::handle);
+    private void wordCompletionGameEvent() {
+        wordCompletionGameButton.setOnAction(GameEventHandler.gameEventHandler);
     }
-
 
     /**
      * 单词选义竞赛事件
      */
-    public void selectMeanByWordGameEvent() {
-        selectMeanByWordGameButton.setOnAction(gameEventHandler::handle);
+    public void wordMeaningSelectionGameEvent() {
+        wordMeaningSelectionButton.setOnAction(GameEventHandler.gameEventHandler);
     }
 
     /**
@@ -327,7 +255,7 @@ public class MainScene extends AbstractScene<Object> {
         sentenceWriteFromMemory.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("com.english.scene.general.sentence.SentenceWriteFromMemoryScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.sentence.SentenceWriteFromMemoryScene");
             }
         });
     }
@@ -335,79 +263,21 @@ public class MainScene extends AbstractScene<Object> {
     /**
      * 导入数据事件
      */
-    public void inputEvent() {
-        inputButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                GridPane gridPane = new GridPane();
-                gridPane.setAlignment(Pos.CENTER);
-                gridPane.setVgap(6.6);
-
-                Label en = getLabel(26);
-                en.setText("en: ");
-                TextField inputEn = getTextField(666);
-
-                Label zh = getLabel(26);
-                zh.setText("zh: ");
-                TextField inputZh = getTextField(666);
-
-                Label enText = getLabel(26);
-                enText.setText("enText: ");
-                TextField inputEnText = getTextField(666);
-
-                Label zhText = getLabel(26);
-                zhText.setText("zhText: ");
-                TextField inputZhText = getTextField(666);
-
-                gridPane.add(en, 1, 0);
-                gridPane.add(inputEn, 2, 0);
-                gridPane.add(zh, 1, 2);
-                gridPane.add(inputZh, 2, 2);
-                gridPane.add(enText, 1, 4);
-                gridPane.add(inputEnText, 2, 4);
-                gridPane.add(zhText, 1, 6);
-                gridPane.add(inputZhText, 2, 6);
-
-                setMainDialog("导入数据", 866, 258);
-                MAIN_DIALOG.setGraphic(gridPane);
-                MAIN_DIALOG.show();
-                MAIN_DIALOG.setOnCloseRequest(new EventHandler<DialogEvent>() {
-                    @Override
-                    public void handle(DialogEvent event) {
-                        if (MAIN_DIALOG.getResult().getButtonData().isDefaultButton()) {
-                            String zhRegex = "[\u4e00-\u9fa5]+";
-                            String zhTextRegex = "[\u4e00-\u9fa5\\w\\pP]+";
-                            String enRegex = "[a-zA-Z]+";
-                            String enTextRegex = "[\\w\\s\\pP]+";
-                            String en = inputEn.getText();
-                            String zh = inputZh.getText();
-                            String zhText = inputZhText.getText();
-                            String enText = inputEnText.getText();
-                            if (StringUtils.hasText(en) && en.matches(enRegex) && StringUtils.hasText(zh) && zh.matches(zhRegex)) {
-                                DICTIONARY_SERVICE.save(new Dictionary(en, zh));
-                                if (StringUtils.hasText(zhText) && enText.matches(enTextRegex) && StringUtils.hasText(enText) && zhText.matches(zhTextRegex)) {
-                                    CORPUS_SERVICE.save(new Corpus(en, enText, zhText));
-                                }
-                            }
-                        }
-                        MAIN_DIALOG.setGraphic(null);
-                    }
-                });
-            }
-        });
+    public void importEvent() {
+        inputButton.setOnAction(InputDataEventHandler.inputDataEventHandler);
     }
 
     /**
-     * 导入词典文件事件
+     * 导入文件事件
      */
-    public void inputDictionaryFileEvent() {
-        inputDictionaryFileButton.setOnAction(inputFileHandler::handle);
+    public void importDictionaryFileEvent() {
+        importDictionaryFileButton.setOnAction(importFileHandler::handle);
     }
 
     /**
      * 导入语句文件事件
      */
-    public void inputCorpusFileEvent() {
-        inputCorpusFileButton.setOnAction(inputFileHandler::handle);
+    public void importCorpusFileEvent() {
+        importCorpusFileButton.setOnAction(importFileHandler::handle);
     }
 }

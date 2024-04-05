@@ -1,8 +1,9 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
+import com.english.Utils.InstanceUtils;
 import com.english.Utils.StringUtils;
-import com.english.scene.AbstractScene;
+import com.english.scene.game.CountdownScene;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -22,29 +23,33 @@ import java.util.TreeSet;
  * @author XYC
  * 单词补全场景
  */
-public class CompleteWordByFillScene extends AbstractScene<Object> {
+public class WordCompletionScene extends CountdownScene<Object> {
 
     protected static final List<TextField> TEXT_FIELD_LIST = new ArrayList<>();
     /**
-     * fillChars 将挖去的字母存在字符数组中
+     * 当前单词题文本流
      */
-
-    protected char[] fillChars;
-    protected TextFlow enCurrentTextFlow;
+    protected static final TextFlow enCurrentTextFlow = new TextFlow();
     /**
-     * 显示计时器的 label
+     * 当前单词题的中文翻译
      */
-    protected Label enPreviousLabel;
-    protected Label zhCurrentLabel;
+    protected static final Label zhCurrentLabel = new Label();
+    ;
+    /**
+     * 上一个单词题
+     */
+    protected static final Label enPreviousLabel = new Label();
+    ;
+    /**
+     * 将单词中挖去的字母存在字符数组中 fillChars
+     */
+    protected char[] fillChars;
+    ;
+
 
     @Override
     public void initScene() {
         super.initScene();
-
-        //进行场景基本组件实例化
-        enCurrentTextFlow = new TextFlow();
-        enPreviousLabel = new Label();
-        zhCurrentLabel = new Label();
 
         enPreviousLabel.setFont(Font.font(18));
         zhCurrentLabel.setFont(Font.font(18));
@@ -85,7 +90,7 @@ public class CompleteWordByFillScene extends AbstractScene<Object> {
             public void handle(ActionEvent event) {
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
-                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
             }
         });
     }
@@ -94,13 +99,19 @@ public class CompleteWordByFillScene extends AbstractScene<Object> {
         nextButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                enCurrentTextFlow.getChildren().clear();
-                //先通过旧单词的索引设置 enPreviousLabel 的文本
-                enPreviousLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
-                //再更新为新单词的索引
-                dataIndex = RANDOM.nextInt(dataSize);
-                fillImplement();
-                TEXT_FIELD_LIST.get(0).requestFocus();
+                boolean isRight = assessAnswer();
+                if (isRight) {
+                    enCurrentTextFlow.getChildren().clear();
+                    // 先通过旧单词的索引设置 enPreviousLabel 的文本
+                    enPreviousLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
+                    // 再更新为新单词的索引
+                    dataIndex = RANDOM.nextInt(dataSize);
+                    fillImplement();
+                    TEXT_FIELD_LIST.get(0).requestFocus();
+                } else {
+                    //先通过旧单词的索引设置 enPreviousLabel 的文本
+                    enPreviousLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
+                }
             }
         });
     }
@@ -119,7 +130,7 @@ public class CompleteWordByFillScene extends AbstractScene<Object> {
         int beforeSize = TEXT_FIELD_LIST.size();
 
         String en = DICTIONARY_LIST.get(dataIndex).getEn();
-        LOGGER.info(en);
+        InstanceUtils.LOGGER.info(en);
         char[] enChars = en.toCharArray();
         int enLength = enChars.length;
         int fillCount = enLength / 2;
@@ -168,7 +179,7 @@ public class CompleteWordByFillScene extends AbstractScene<Object> {
     }
 
     /**
-     * 为输入框绑定事件，如输入监听事件，以及键盘 左/右 按钮触发事件
+     * 为输入框绑定事件：输入监听事件、键盘 左/右 按钮触发事件
      */
     public void textFieldRequestFocus(int beginIndex) {
         for (int i = beginIndex; i < TEXT_FIELD_LIST.size(); i++) {
@@ -219,6 +230,21 @@ public class CompleteWordByFillScene extends AbstractScene<Object> {
                 }
             });
         }
+    }
+
+    /**
+     * 评估用户的回答是否正确
+     */
+    public boolean assessAnswer() {
+        boolean isRight = true;
+        for (int i = 0; i < fillChars.length; i++) {
+            TextField fill = TEXT_FIELD_LIST.get(i);
+            if (!String.valueOf(fillChars[i]).equals(fill.getText())) {
+                isRight = false;
+                break;
+            }
+        }
+        return isRight;
     }
 
     public TextField getTextField(int index, int width) {

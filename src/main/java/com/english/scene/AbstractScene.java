@@ -1,7 +1,7 @@
 package com.english.scene;
 
 import com.english.EnglishAppStart;
-import com.english.concurrent.ServiceFunctionHandler;
+import com.english.concurrent.ServiceFunctionExecutor;
 import com.english.entity.Corpus;
 import com.english.entity.Dictionary;
 import com.english.function.ServiceFunction;
@@ -18,8 +18,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +28,11 @@ import java.util.regex.Pattern;
  * @author XYC
  */
 public abstract class AbstractScene<T> implements ServiceFunction<T> {
-    protected static final DictionaryService DICTIONARY_SERVICE = DictionaryServiceImpl.DICTIONARY_SERVICE;
-    protected static final CorpusService CORPUS_SERVICE = CorpusServiceImpl.CORPUS_SERVICE;
+    public static final DictionaryService DICTIONARY_SERVICE = DictionaryServiceImpl.DICTIONARY_SERVICE;
+    public static final CorpusService CORPUS_SERVICE = CorpusServiceImpl.CORPUS_SERVICE;
+    /**
+     * 正则表达式，匹配所有字母与数字的模式，等同于[a-zA-Z0-9]
+     */
     public static final Pattern PATTERN = Pattern.compile("\\w+");
     public static final Random RANDOM = new Random();
     protected static final List<Dictionary> DICTIONARY_LIST = new ArrayList<>();
@@ -42,10 +43,11 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
     protected Scene scene;
 
     protected AnchorPane anchorPane;
-    protected static final Dialog<ButtonType> MAIN_DIALOG = new Dialog<>();
+    public static final Dialog<ButtonType> DIALOG = new Dialog<>();
+    public static final Button DIALOG_OK = (Button) DIALOG.getDialogPane().lookupButton(ButtonType.OK);
 
     static {
-        MAIN_DIALOG.getDialogPane().getButtonTypes().addAll(ButtonType.NO, ButtonType.OK);
+        DIALOG.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
     }
 
     /**
@@ -60,12 +62,15 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
     protected HBox sceneHBox;
     protected VBox sceneVBox;
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractScene.class);
-    private ServiceFunctionHandler<T> initDataHandler = new ServiceFunctionHandler<>(this);
+    /**
+     * 加载场景数据的执行器
+     */
+    private final ServiceFunctionExecutor<T> loadDataExecutor = new ServiceFunctionExecutor<>(this);
 
     public AbstractScene() {
-        this.initScene();
-        this.bindEvent();
+        initScene();
+        bindEvent();
+        extend();
     }
 
     /**
@@ -78,17 +83,37 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
         scene = new Scene(anchorPane);
     }
 
-    /**
-     * 初始化场景数据
-     */
-    public void initData() {
-        this.initDataHandler.restart();
+    public static void setDialog(String title, int width, int height) {
+        DIALOG.setTitle(title);
+        DIALOG.setWidth(width);
+        DIALOG.setHeight(height);
     }
 
     /**
      * 为场景绑定事件
      */
     public abstract void bindEvent();
+
+    public static Label getLabel(int fontSize) {
+        Label label = new Label();
+        label.setWrapText(true);
+        label.setAlignment(Pos.CENTER);
+        label.setFont(Font.font(fontSize));
+        return label;
+    }
+
+    public static Label getLabel(String text, int fontSize) {
+        Label label = getLabel(fontSize);
+        label.setText(text);
+        return label;
+    }
+
+    public static TextField getTextField(int width) {
+        TextField textField = new TextField();
+        textField.setPrefWidth(width);
+        textField.setAlignment(Pos.CENTER);
+        return textField;
+    }
 
     public static List<Tab> addTab() {
         List<Tab> tabList = new ArrayList<>();
@@ -109,18 +134,31 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
         return tabList;
     }
 
-    public static void setMainDialog(String title, int width, int height) {
-        MAIN_DIALOG.setTitle(title);
-        MAIN_DIALOG.setWidth(width);
-        MAIN_DIALOG.setHeight(height);
+    /**
+     * 加载场景数据
+     */
+    public void loadData() {
+        this.loadDataExecutor.restart();
     }
 
+    /**
+     * 其他扩展
+     */
+    public void extend() {
+    }
 
+    /**
+     * 运行场景
+     */
     public Scene run() {
-        initData();
-        return this.scene;
+        loadData();
+        return scene;
     }
 
+    /**
+     * 、
+     * 运行场景，传递场景参数
+     */
     public Scene run(Object... args) {
         return run();
     }
@@ -132,52 +170,36 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
             }
         });
     }
 
-
-    public void addSceneHBox() {
-        this.sceneHBox = new HBox(20);
-        this.sceneHBox.setAlignment(Pos.CENTER);
-        this.anchorPane.getChildren().add(sceneHBox);
-    }
-
-    public void addSceneVBox() {
-        this.sceneVBox = new VBox(36);
-        this.sceneVBox.setAlignment(Pos.CENTER);
-        this.sceneVBox.setStyle("-fx-background-color: rgba(60,83,176,0.68);-fx-pref-width: 378;-fx-pref-height: 266");
-        this.anchorPane.getChildren().add(sceneVBox);
-        AnchorPane.setTopAnchor(sceneVBox, 36.6);
-    }
-
     public void addExitButton() {
-        this.exitButton = new Button("退出");
-        this.anchorPane.getChildren().add(exitButton);
+        exitButton = new Button("退出");
+        anchorPane.getChildren().add(exitButton);
         AnchorPane.setTopAnchor(exitButton, 8.8);
         AnchorPane.setLeftAnchor(exitButton, 8.8);
     }
 
     public void addNextButton() {
-        this.nextButton = new Button("继续");
-        this.anchorPane.getChildren().add(nextButton);
+        nextButton = new Button("继续");
+        anchorPane.getChildren().add(nextButton);
         AnchorPane.setBottomAnchor(nextButton, 8.8);
         AnchorPane.setRightAnchor(nextButton, 8.8);
     }
 
-    public TextField getTextField(int width) {
-        TextField textField = new TextField();
-        textField.setPrefWidth(width);
-        textField.setAlignment(Pos.CENTER);
-        return textField;
+    public void addSceneHBox() {
+        sceneHBox = new HBox(20);
+        sceneHBox.setAlignment(Pos.CENTER);
+        anchorPane.getChildren().add(sceneHBox);
     }
 
-    public Label getLabel(int fontSize) {
-        Label label = new Label();
-        label.setWrapText(true);
-        label.setAlignment(Pos.CENTER);
-        label.setFont(Font.font(fontSize));
-        return label;
+    public void addSceneVBox() {
+        sceneVBox = new VBox(36);
+        sceneVBox.setAlignment(Pos.CENTER);
+        sceneVBox.setStyle("-fx-background-color: rgba(60,83,176,0.68);-fx-pref-width: 378;-fx-pref-height: 266");
+        anchorPane.getChildren().add(sceneVBox);
+        AnchorPane.setTopAnchor(sceneVBox, 36.6);
     }
 }

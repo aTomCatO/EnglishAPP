@@ -1,7 +1,7 @@
 package com.english.scene.game;
 
 import com.english.EnglishAppStart;
-import com.english.concurrent.CountDownHandler;
+import com.english.Utils.InstanceUtils;
 import com.english.service.BaseService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -19,29 +20,30 @@ import java.util.concurrent.TimeUnit;
  * @author XYC
  * 单词选义竞赛场景
  */
-public class SelectMeanByWordGameScene extends AbstractGameScene {
+@Slf4j
+public class WordMeaningSelectionGameScene extends CountdownScene<Object> {
     /**
      * 显示先前的单词的 Label
      */
-    private Label enPreviousLabel;
+    private static final Label enPreviousLabel = new Label();
     /**
      * 显示当前的单词的 Label
      */
-    private Label enCurrentLabel;
+    private static final Label enCurrentLabel = new Label();
     /**
      * 以下 4 个 Label 是显示中文翻译的4个选项
      */
-    private Label zhSelectLabel1;
-    private Label zhSelectLabel2;
-    private Label zhSelectLabel3;
-    private Label zhSelectLabel4;
+    private static final Label zhSelectLabel1 = new Label();
+    private static final Label zhSelectLabel2 = new Label();
+    private static final Label zhSelectLabel3 = new Label();
+    private static final Label zhSelectLabel4 = new Label();
     /**
      * 不显示，用来指向正确的 Label 选项
      */
     private Label zhAccurateSelectLabel;
-    private VBox vBox1;
-    private VBox vBox2;
-    private BorderPane borderPane;
+    private static final VBox vBox1 = new VBox(26);
+    private static final VBox vBox2 = new VBox(26);
+    private static final BorderPane borderPane = new BorderPane();
     private UpdateUiTask updateUiTask;
     private boolean doPressed = true;
 
@@ -51,20 +53,6 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
 
         addExitButton();
         addSceneVBox();
-
-        gameCountDownHandler = CountDownHandler.getCountDownHandler();
-
-        enPreviousLabel = new Label();
-        enCurrentLabel = new Label();
-        zhSelectLabel1 = new Label();
-        zhSelectLabel2 = new Label();
-        zhSelectLabel3 = new Label();
-        zhSelectLabel4 = new Label();
-        countDownLabel = gameCountDownHandler.getCountDownLabel();
-
-        this.anchorPane.getChildren().add(countDownLabel);
-        AnchorPane.setTopAnchor(countDownLabel, 8.8);
-        AnchorPane.setRightAnchor(countDownLabel, 8.8);
 
         enPreviousLabel.setFont(Font.font(18));
         enCurrentLabel.setFont(Font.font(26));
@@ -79,17 +67,18 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         zhSelectLabel3.setBorder(new Border(new BorderStroke(Paint.valueOf("384A98FF"), BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(2))));
         zhSelectLabel4.setBorder(new Border(new BorderStroke(Paint.valueOf("384A98FF"), BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(2))));
 
-        vBox1 = new VBox(26);
-        vBox2 = new VBox(26);
-
         vBox1.getChildren().addAll(zhSelectLabel1, zhSelectLabel3);
         vBox2.getChildren().addAll(zhSelectLabel2, zhSelectLabel4);
 
-        borderPane = new BorderPane();
         borderPane.setLeft(vBox1);
         borderPane.setRight(vBox2);
 
         sceneVBox.getChildren().addAll(enPreviousLabel, enCurrentLabel, borderPane);
+    }
+
+    @Override
+    public void extend() {
+        addCountdown();
     }
 
     @Override
@@ -110,7 +99,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         String en = DICTIONARY_LIST.get(dataIndex).getEn();
         String zh = DICTIONARY_LIST.get(dataIndex).getZh();
         enCurrentLabel.setText(en);
-        LOGGER.info(zh);
+        InstanceUtils.LOGGER.info(zh);
 
         int zhAccurateLabelIndex = RANDOM.nextInt(4) + 1;
         TreeSet<Integer> wrongIndexSet = generateWrongIndex();
@@ -176,10 +165,12 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                updateUiTask.cancel();
-                gameCountDownHandler.cancel();
+                if (updateUiTask != null && updateUiTask.isRunning()) {
+                    updateUiTask.cancel();
+                }
+                countdownExecutor.cancel();
                 enPreviousLabel.setText(null);
-                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
             }
         });
     }
@@ -190,19 +181,19 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
                 doPressed = false;
                 switch (keyEvent.getCode().getName()) {
                     case "A": {
-                        judge(zhSelectLabel1);
+                        assessAnswer(zhSelectLabel1);
                         break;
                     }
                     case "B": {
-                        judge(zhSelectLabel2);
+                        assessAnswer(zhSelectLabel2);
                         break;
                     }
                     case "C": {
-                        judge(zhSelectLabel3);
+                        assessAnswer(zhSelectLabel3);
                         break;
                     }
                     case "D": {
-                        judge(zhSelectLabel4);
+                        assessAnswer(zhSelectLabel4);
                         break;
                     }
                     default: {
@@ -214,7 +205,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
         });
     }
 
-    public void judge(Label zhChooseLabel) {
+    public void assessAnswer(Label zhChooseLabel) {
         if (DICTIONARY_LIST.get(dataIndex).getZh().equals(zhChooseLabel.getText())) {
             correctCount += 1;
             zhChooseLabel.setStyle("-fx-background-color: #75de6f");
@@ -228,12 +219,12 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
 
     @Override
     public Scene run(Object... args) {
-        gameDuration = (Integer) args[0];
-        initData();
+        int duration = (Integer) args[0];
+        loadData();
         doPressed = true;
-        gameCountDownHandler.setCountDownSupport(this);
-        gameCountDownHandler.setTime(gameDuration);
-        gameCountDownHandler.restart();
+        countdownExecutor.setCountdownScene(this);
+        countdownExecutor.setDuration(duration);
+        countdownExecutor.restart();
         return scene;
     }
 
@@ -260,7 +251,7 @@ public class SelectMeanByWordGameScene extends AbstractGameScene {
 
             dataIndex += 1;
             if (dataIndex == dataSize) {
-                gameEnd();
+                countdownEnd();
                 return;
             }
 

@@ -1,6 +1,7 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
+import com.english.Utils.InstanceUtils;
 import com.english.scene.AbstractScene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,19 +19,15 @@ import java.util.regex.Pattern;
  * 读句填词场景
  */
 public class ReadSentenceFillWordScene extends AbstractScene<Object> {
-    private Label enLabel;
-    private Label zhTextLabel;
+    private static final Label enLabel = getLabel(16);
+    private static final Label zhTextLabel = new Label();
 
-    private TextFlow enTextFlow;
+    private static final TextFlow enTextFlow = new TextFlow();
 
     @Override
     public void initScene() {
         super.initScene();
 
-        //进行场景基本组件实例化
-        enLabel = getLabel(16);
-        zhTextLabel = new Label();
-        enTextFlow = new TextFlow();
         zhTextLabel.setFont(Font.font(16));
 
         addSceneVBox();
@@ -66,7 +63,7 @@ public class ReadSentenceFillWordScene extends AbstractScene<Object> {
             @Override
             public void handle(ActionEvent event) {
                 enTextFlow.getChildren().clear();
-                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
             }
         });
     }
@@ -81,8 +78,7 @@ public class ReadSentenceFillWordScene extends AbstractScene<Object> {
             //但如果被挖掉的词出现在该句子中的其他地方（可能词性不同），那么这另一个词也会被挖掉
             //这样造成的后果就是无法精确地进行比较，所以就采用了句子比较句子的方式。
             for (Node child : enTextFlow.getChildren()) {
-                if (child instanceof TextField) {
-                    TextField textField = (TextField) child;
+                if (child instanceof TextField textField) {
                     text.append(textField.getText());
                     textField.setText(null);
                 } else {
@@ -110,7 +106,7 @@ public class ReadSentenceFillWordScene extends AbstractScene<Object> {
         Matcher matcher = pattern.matcher(enText);
         while (matcher.find()) {
             String matchedEn = matcher.group();
-            LOGGER.info(matchedEn);
+            InstanceUtils.LOGGER.info(matchedEn);
             int beginIndex = enText.indexOf(matchedEn);
             int endIndex = beginIndex + matchedEn.length();
             TextField textField = getTextField(78);

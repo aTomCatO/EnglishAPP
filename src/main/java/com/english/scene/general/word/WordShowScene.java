@@ -11,9 +11,9 @@ import javafx.scene.layout.FlowPane;
  * 单词展示场景
  */
 public class WordShowScene extends AbstractScene<Object> {
-    private FlowPane flowPane;
-    private ListView<String> enListView;
-    private ListView<String> zhListView;
+    private static final FlowPane flowPane = new FlowPane();
+    private static final ListView<String> enListView = new ListView<>();
+    private static final ListView<String> zhListView = new ListView<>();
 
     @Override
     public void initScene() {
@@ -21,10 +21,6 @@ public class WordShowScene extends AbstractScene<Object> {
 
         addExitButton();
 
-        flowPane = new FlowPane();
-
-        enListView = new ListView<>();
-        zhListView = new ListView<>();
         enListView.setPrefWidth(194);
         zhListView.setPrefWidth(194);
 
@@ -35,7 +31,7 @@ public class WordShowScene extends AbstractScene<Object> {
     }
 
     @Override
-    public void initData() {
+    public void loadData() {
         for (int i = 0; i < dataSize; i++) {
             enListView.getItems().add(DICTIONARY_LIST.get(i).getEn());
             zhListView.getItems().add(DICTIONARY_LIST.get(i).getZh());
@@ -63,7 +59,7 @@ public class WordShowScene extends AbstractScene<Object> {
         exitButton.setOnAction(event -> {
             enListView.getItems().clear();
             zhListView.getItems().clear();
-            EnglishAppStart.convertScene("com.english.scene.general.MainScene");
+            EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
         });
     }
 }

@@ -8,10 +8,10 @@ import javafx.concurrent.Task;
  * @author XYC
  * 初始化场景数据
  */
-public class ServiceFunctionHandler<T> extends Service<T> {
+public class ServiceFunctionExecutor<T> extends Service<T> {
     private final ServiceFunction<T> function;
 
-    public ServiceFunctionHandler(ServiceFunction<T> function) {
+    public ServiceFunctionExecutor(ServiceFunction<T> function) {
         this.function = function;
     }
 

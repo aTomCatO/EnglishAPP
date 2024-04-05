@@ -1,9 +1,8 @@
 package com.english.repository;
 
 import com.english.Utils.FileUtils;
+import com.english.Utils.InstanceUtils;
 import com.english.service.DictionaryServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,7 +18,6 @@ import java.util.Properties;
 public abstract class AbstractDao<T> implements BaseDao<T> {
     protected static Connection connection;
     protected static Statement statement;
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractDao.class);
 
     static {
         Properties properties;
@@ -28,20 +26,22 @@ public abstract class AbstractDao<T> implements BaseDao<T> {
         String password = null;
         try {
             properties = FileUtils.load("D:\\JavaWorld\\Demo\\EnglishApp\\src\\main\\resources\\config.properties");
-            String driverClass = properties.getProperty("driverClass");
-            url = properties.getProperty("url");
-            user = properties.getProperty("user");
-            password = properties.getProperty("password");
-            Class.forName(driverClass);
-            connection = DriverManager.getConnection(url, user, password);
-            statement = connection.createStatement();
+            if (properties != null) {
+                String driverClass = properties.getProperty("driverClass");
+                url = properties.getProperty("url");
+                user = properties.getProperty("user");
+                password = properties.getProperty("password");
+                Class.forName(driverClass);
+                connection = DriverManager.getConnection(url, user, password);
+                statement = connection.createStatement();
+            }
         } catch (SQLException e) {
             String message = e.getMessage();
-            LOGGER.info("【ERROR】: " + message);
+            InstanceUtils.LOGGER.error(message);
             String linkFailure = "Communications link failure";
             String unknownData = "Unknown database 'EnglishApp'";
             if (message.contains(linkFailure)) {
-                LOGGER.info("\n原因: 数据库服务已关闭,无法得到连接 \n解决: 开启此服务");
+                InstanceUtils.LOGGER.info("原因: MySQL服务已关闭");
                 System.exit(0);
             } else if (message.contains(unknownData)) {
                 try {
@@ -53,11 +53,11 @@ public abstract class AbstractDao<T> implements BaseDao<T> {
                     statement.execute("create table corpus(en varchar(16) comment '单词',enText text comment '例句',zhText text comment '中文翻译')");
                     DictionaryServiceImpl.DICTIONARY_SERVICE.saveByFile("dataFile/dictionary.txt");
                 } catch (SQLException sqlException) {
-                    LOGGER.info("【ERROR】: " + sqlException.getMessage());
+                    InstanceUtils.LOGGER.error(sqlException.getMessage());
                 }
             }
         } catch (ClassNotFoundException e) {
-            LOGGER.info("【ERROR】: " + e.getMessage());
+            InstanceUtils.LOGGER.error(e.getMessage());
         }
     }
 

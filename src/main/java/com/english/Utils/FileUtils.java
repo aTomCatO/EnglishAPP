@@ -1,5 +1,7 @@
 package com.english.Utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import java.util.*;
 /**
  * @author XYC
  */
+@Slf4j
 public class FileUtils {
 
     /**
@@ -23,25 +26,28 @@ public class FileUtils {
     public static Properties load(String filePath) {
         InputStream inputStream;
         try {
+            // 从系统文件中获取
             inputStream = Files.newInputStream(Paths.get(filePath));
         } catch (IOException e) {
+            // 从类资源文件中获取
             inputStream = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
         }
         if (inputStream == null) {
-            throw new RuntimeException("【ERROR】文件路径异常！filePath:" + filePath);
+            log.error("无法从指定的文件路径下读取到资源！filePath:{}", filePath);
+            return null;
         }
-        Properties properties;
+        Properties properties = null;
         try {
             InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             properties = new Properties();
             properties.load(reader);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         } finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
         return properties;

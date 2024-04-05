@@ -17,9 +17,9 @@ import javafx.util.Duration;
  * 单词浏览场景
  */
 public class WordBrowseScene extends AbstractScene {
-    private Label enPreviousLabel;
-    private Label enCurrentLabel;
-    private Label zhCurrentLabel;
+    private static final Label enPreviousLabel = new Label();
+    private static final Label enCurrentLabel = new Label();
+    private static final Label zhCurrentLabel = new Label();
 
     private final ScheduledService<Integer> scheduledService = new ScheduledService<Integer>() {
         {
@@ -53,11 +53,6 @@ public class WordBrowseScene extends AbstractScene {
     @Override
     public void initScene() {
         super.initScene();
-
-        //进行场景基本组件实例化
-        enPreviousLabel = new Label();
-        enCurrentLabel = new Label();
-        zhCurrentLabel = new Label();
 
         enPreviousLabel.setFont(Font.font(18));
         enCurrentLabel.setFont(Font.font(28));
@@ -96,14 +91,14 @@ public class WordBrowseScene extends AbstractScene {
             public void handle(ActionEvent event) {
                 scheduledService.cancel();
                 scheduledService.reset();
-                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
+                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
             }
         });
     }
 
     @Override
     public Scene run() {
-        initData();
+        loadData();
         scheduledService.start();
         return scene;
     }
