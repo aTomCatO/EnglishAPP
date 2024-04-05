@@ -91,7 +91,7 @@ public class WordBrowseScene extends AbstractScene {
             public void handle(ActionEvent event) {
                 scheduledService.cancel();
                 scheduledService.reset();
-                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }

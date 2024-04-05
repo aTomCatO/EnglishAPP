@@ -22,7 +22,7 @@ public class EnglishAppStart extends Application {
     private static final Map<String, AbstractScene<?>> SCENE_MAP = new HashMap<>();
     public static Stage primaryStage;
 
-    public static void sceneChanger(String sceneName, Object... args) {
+    public static void convertScene(String sceneName, Object... args) {
         AbstractScene<?> scene;
         if ((scene = SCENE_MAP.get(sceneName)) == null) {
             try {
@@ -40,6 +40,7 @@ public class EnglishAppStart extends Application {
             primaryStage.setScene(scene.run(args));
         }
     }
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -55,15 +56,13 @@ public class EnglishAppStart extends Application {
         primaryStage.setWidth(388);
         primaryStage.setHeight(388);
         primaryStage.setTitle("englishApp");
-        primaryStage.getIcons().add(new Image("D:\\JavaWorld\\Demo\\EnglishApp\\src\\main\\resources\\img\\小熊.png"));
-        // Objects.requireNonNull(EnglishAppStart.class.getClassLoader().getResourceAsStream("img/小熊.png"))
+        primaryStage.getIcons().add(new Image("img/小熊.png"));
         primaryStage.show();
-        sceneChanger("com.english.scene.general.MainScene");
+        convertScene("com.english.scene.general.MainScene");
     }
 
     @Override
     public void stop() throws Exception {
-        super.stop();
         BaseService.THREAD_POOL.shutdownNow();
     }
 }

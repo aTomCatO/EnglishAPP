@@ -59,7 +59,6 @@ public class Client extends Application {
 
     @Override
     public void stop() throws Exception {
-        super.stop();
         NettyService.close();
     }
 

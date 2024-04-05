@@ -189,7 +189,7 @@ public class MainScene extends AbstractScene<Object> {
                         // 匹配是否是不为 0 开头的数字
                         if (numberText.matches("^[1-9]\\d*$")) {
                             dataSize = Integer.parseInt(numberText);
-                            EnglishAppStart.sceneChanger("com.english.scene.general.word.WordReciteScene");
+                            EnglishAppStart.convertScene("com.english.scene.general.word.WordReciteScene");
                         }
                         DIALOG_OK.setOnAction(null);
                         DIALOG.setGraphic(null);
@@ -207,7 +207,7 @@ public class MainScene extends AbstractScene<Object> {
         wordBrowseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.sceneChanger("com.english.scene.general.word.WordBrowseScene");
+                EnglishAppStart.convertScene("com.english.scene.general.word.WordBrowseScene");
             }
         });
     }
@@ -219,7 +219,7 @@ public class MainScene extends AbstractScene<Object> {
         wordCompletionButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.sceneChanger("com.english.scene.general.word.WordCompletionScene");
+                EnglishAppStart.convertScene("com.english.scene.general.word.WordCompletionScene");
             }
         });
     }
@@ -229,7 +229,7 @@ public class MainScene extends AbstractScene<Object> {
      */
     public void readSentenceFillWordEvent() {
         readSentenceFillWordButton.setOnAction((event) -> {
-            EnglishAppStart.sceneChanger("com.english.scene.general.word.ReadSentenceFillWordScene");
+            EnglishAppStart.convertScene("com.english.scene.general.word.ReadSentenceFillWordScene");
         });
     }
 
@@ -255,7 +255,7 @@ public class MainScene extends AbstractScene<Object> {
         sentenceWriteFromMemory.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.sceneChanger("com.english.scene.general.sentence.SentenceWriteFromMemoryScene");
+                EnglishAppStart.convertScene("com.english.scene.general.sentence.SentenceWriteFromMemoryScene");
             }
         });
     }

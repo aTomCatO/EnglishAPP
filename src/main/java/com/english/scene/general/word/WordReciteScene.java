@@ -95,13 +95,13 @@ public class WordReciteScene extends AbstractScene<Object> {
                             switch (selectedItem) {
                                 case "单词补全" -> {
                                     dataIndex = 0;
-                                    EnglishAppStart.sceneChanger("com.english.scene.general.word.WordCompletionScene");
+                                    EnglishAppStart.convertScene("com.english.scene.general.word.WordCompletionScene");
                                 }
                                 case "重新背词" -> {
                                     dataIndex = -1;
                                 }
                                 default -> {
-                                    EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
+                                    EnglishAppStart.convertScene("com.english.scene.general.MainScene");
                                 }
                             }
                             DIALOG_OK.setOnAction(null);

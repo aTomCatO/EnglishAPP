@@ -33,7 +33,7 @@ public class WordCompletionGameScene extends WordCompletionScene {
                 countdownExecutor.cancel();
                 enPreviousLabel.setText(null);
                 enCurrentTextFlow.getChildren().clear();
-                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }

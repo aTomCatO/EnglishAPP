@@ -52,7 +52,7 @@ public abstract class CountdownScene<T> extends AbstractScene<T> {
             public void handle(ActionEvent event) {
                 DIALOG_OK.setOnAction(null);
                 DIALOG.setContentText(null);
-                EnglishAppStart.sceneChanger("com.english.scene.general.word.WordShowScene");
+                EnglishAppStart.convertScene("com.english.scene.general.word.WordShowScene");
             }
         });
         DIALOG.show();

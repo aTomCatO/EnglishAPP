@@ -170,7 +170,7 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }

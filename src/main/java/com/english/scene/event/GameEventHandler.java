@@ -82,7 +82,7 @@ public class GameEventHandler implements EventHandler<ActionEvent> {
                 // 获取事件源
                 MenuItem menuItem = (MenuItem) eventTarget.getSource();
                 String sceneName = (String) menuItem.getUserData();
-                EnglishAppStart.sceneChanger(sceneName, duration);
+                EnglishAppStart.convertScene(sceneName, duration);
             }
             AbstractScene.DIALOG_OK.setOnAction(null);
             AbstractScene.DIALOG.setGraphic(null);

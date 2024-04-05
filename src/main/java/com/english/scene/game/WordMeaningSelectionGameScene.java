@@ -170,7 +170,7 @@ public class WordMeaningSelectionGameScene extends CountdownScene<Object> {
                 }
                 countdownExecutor.cancel();
                 enPreviousLabel.setText(null);
-                EnglishAppStart.sceneChanger("com.english.scene.general.MainScene");
+                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
             }
         });
     }
