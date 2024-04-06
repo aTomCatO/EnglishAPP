@@ -52,9 +52,17 @@ public abstract class CountdownScene<T> extends AbstractScene<T> {
             public void handle(ActionEvent event) {
                 DIALOG_OK.setOnAction(null);
                 DIALOG.setContentText(null);
+                endExtend();
                 EnglishAppStart.convertScene("com.english.scene.general.word.WordShowScene");
             }
         });
         DIALOG.show();
+    }
+
+    /**
+     * 倒计时结束的扩展处理，根据子类需求实现
+     */
+    public void endExtend() {
+
     }
 }

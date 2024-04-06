@@ -17,6 +17,12 @@ public class WordCompletionGameScene extends WordCompletionScene {
     }
 
     @Override
+    public void endExtend() {
+        enPreviousLabel.setText(null);
+        enCurrentTextFlow.getChildren().clear();
+    }
+
+    @Override
     public Object doCall() {
         dataIndex = 0;
         correctCount = 0;

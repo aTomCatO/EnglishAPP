@@ -28,6 +28,7 @@ public class EnglishAppStart extends Application {
             try {
                 Class<? extends AbstractScene> aClass = Class.forName(sceneName).asSubclass(AbstractScene.class);
                 scene = aClass.getConstructor().newInstance();
+                scene.init();
                 SCENE_MAP.put(sceneName, scene);
             } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                      InstantiationException | IllegalAccessException e) {

@@ -21,10 +21,10 @@ import java.util.List;
  * 背词场景
  */
 public class WordReciteScene extends AbstractScene<Object> {
-    private static final ListView<Corpus> listView = new ListView<>();
-    private static final Label enPreviousLabel = new Label();
-    private static final Label enCurrentLabel = new Label();
-    private static final Label zhLabel = new Label();
+    private final ListView<Corpus> listView = new ListView<>();
+    private final Label enPreviousLabel = new Label();
+    private final Label enCurrentLabel = new Label();
+    private final Label zhLabel = new Label();
 
     public void initScene() {
         super.initScene();

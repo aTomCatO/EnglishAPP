@@ -25,25 +25,25 @@ public class WordMeaningSelectionGameScene extends CountdownScene<Object> {
     /**
      * 显示先前的单词的 Label
      */
-    private static final Label enPreviousLabel = new Label();
+    private final Label enPreviousLabel = new Label();
     /**
      * 显示当前的单词的 Label
      */
-    private static final Label enCurrentLabel = new Label();
+    private final Label enCurrentLabel = new Label();
     /**
      * 以下 4 个 Label 是显示中文翻译的4个选项
      */
-    private static final Label zhSelectLabel1 = new Label();
-    private static final Label zhSelectLabel2 = new Label();
-    private static final Label zhSelectLabel3 = new Label();
-    private static final Label zhSelectLabel4 = new Label();
+    private final Label zhSelectLabel1 = new Label();
+    private final Label zhSelectLabel2 = new Label();
+    private final Label zhSelectLabel3 = new Label();
+    private final Label zhSelectLabel4 = new Label();
     /**
      * 不显示，用来指向正确的 Label 选项
      */
     private Label zhAccurateSelectLabel;
-    private static final VBox vBox1 = new VBox(26);
-    private static final VBox vBox2 = new VBox(26);
-    private static final BorderPane borderPane = new BorderPane();
+    private final VBox vBox1 = new VBox(26);
+    private final VBox vBox2 = new VBox(26);
+    private final BorderPane borderPane = new BorderPane();
     private UpdateUiTask updateUiTask;
     private boolean doPressed = true;
 

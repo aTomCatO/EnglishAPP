@@ -2,7 +2,6 @@ package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
 import com.english.Utils.InstanceUtils;
-import com.english.Utils.StringUtils;
 import com.english.scene.game.CountdownScene;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,24 +26,26 @@ public class WordCompletionScene extends CountdownScene<Object> {
 
     protected static final List<TextField> TEXT_FIELD_LIST = new ArrayList<>();
     /**
+     * 单词碎片，临时存储不是被挖的字母，以便设置给label
+     */
+    protected static final StringBuilder piece = new StringBuilder();
+    /**
      * 当前单词题文本流
      */
-    protected static final TextFlow enCurrentTextFlow = new TextFlow();
+    protected final TextFlow enCurrentTextFlow = new TextFlow();
     /**
      * 当前单词题的中文翻译
      */
-    protected static final Label zhCurrentLabel = new Label();
-    ;
+    protected final Label zhCurrentLabel = new Label();
     /**
      * 上一个单词题
      */
-    protected static final Label enPreviousLabel = new Label();
+    protected final Label enPreviousLabel = new Label();
     ;
     /**
-     * 将单词中挖去的字母存在字符数组中 fillChars
+     * 缺少的字母数组，将当前单词中挖去的字母保存在该字符数组中
      */
     protected char[] fillChars;
-    ;
 
 
     @Override
@@ -133,8 +134,10 @@ public class WordCompletionScene extends CountdownScene<Object> {
         InstanceUtils.LOGGER.info(en);
         char[] enChars = en.toCharArray();
         int enLength = enChars.length;
+        // 计算需要填补的字母数
         int fillCount = enLength / 2;
-        this.fillChars = new char[fillCount];
+        fillChars = new char[fillCount];
+        // 使用TreeSet集合记录要被挖掉的字母在单词字符串中的索引（随机生成的索引）
         Set<Integer> indexSet = new TreeSet<>();
         for (int i = 0; i < fillCount; i++) {
             int charIndex = RANDOM.nextInt(enLength);
@@ -142,22 +145,19 @@ public class WordCompletionScene extends CountdownScene<Object> {
                 charIndex = RANDOM.nextInt(enLength);
             }
         }
-        StringBuilder piece = new StringBuilder();
         int textFieldIndex = 0;
         for (int i = 0; i < enLength; i++) {
             if (indexSet.contains(i)) {
                 if (piece.length() > 0) {
                     Label label = getLabel(26);
                     label.setText(piece.toString());
-
                     enCurrentTextFlow.getChildren().add(label);
                     piece.delete(0, piece.length());
                 }
 
                 TextField inputChar = getTextField(textFieldIndex, 32);
-
                 enCurrentTextFlow.getChildren().add(inputChar);
-                this.fillChars[textFieldIndex++] = enChars[i];
+                fillChars[textFieldIndex++] = enChars[i];
             } else {
                 piece.append(enChars[i]);
             }
@@ -166,15 +166,18 @@ public class WordCompletionScene extends CountdownScene<Object> {
             Label label = getLabel(26);
             label.setText(piece.toString());
             enCurrentTextFlow.getChildren().add(label);
+            piece.delete(0, piece.length());
         }
 
-        //当 集合中的元素大小 afterSize 大于 beforeSize 时
-        //则表示有新地输入框需要绑定事件
-        //从 beforeSize 作为起始索引开始则是为了避免旧地输入框重复绑定事假
+        // 当 集合中的元素大小 afterSize 大于 beforeSize 时
+        // 则表示有新地输入框需要绑定事件
+        // 从 beforeSize 作为起始索引开始则是为了避免旧地输入框重复绑定事假
         int afterSize = TEXT_FIELD_LIST.size();
         if (afterSize > beforeSize) {
             textFieldRequestFocus(beforeSize);
         }
+
+        TEXT_FIELD_LIST.get(0).requestFocus();
         zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
     }
 
@@ -188,7 +191,7 @@ public class WordCompletionScene extends CountdownScene<Object> {
             textField.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (StringUtils.hasText(newValue)) {
+                    if (newValue.matches("[a-zA-Z]")) {
                         int nextIndex = thisIndex + 1;
                         if (nextIndex == fillChars.length) {
                             nextButton.requestFocus();
@@ -201,30 +204,25 @@ public class WordCompletionScene extends CountdownScene<Object> {
             textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    //LOGGER.info(event.getCode().getName());
-                    switch (event.getCode().getName()) {
-                        case "Left": {
-                            //如果当前焦点在第一个输入框,键盘点击向左箭头 ⬅ ,焦点就会给到最后一个输入框
-                            //否则上一个输入框就会获得焦点
-                            if (thisIndex == 0) {
-                                TEXT_FIELD_LIST.get(fillChars.length - 1).requestFocus();
-                            } else {
-                                TEXT_FIELD_LIST.get(thisIndex - 1).requestFocus();
-                            }
-                            break;
+                    String keyName = event.getCode().getName();
+                    // InstanceUtils.LOGGER.info(keyName);
+                    String left = "Left";
+                    String right = "Right";
+                    if (left.equals(keyName)) {
+                        //如果当前焦点在第一个输入框,键盘点击向左箭头 ⬅ ,焦点就会给到最后一个输入框
+                        //否则上一个输入框就会获得焦点
+                        if (thisIndex == 0) {
+                            TEXT_FIELD_LIST.get(fillChars.length - 1).requestFocus();
+                        } else {
+                            TEXT_FIELD_LIST.get(thisIndex - 1).requestFocus();
                         }
-                        case "Right": {
-                            //如果当前焦点在最后一个输入框,键盘点击向右箭头 ➡ ,焦点就会给到第一个输入框
-                            //否则下一个输入框就会获得焦点
-                            if (thisIndex == fillChars.length - 1) {
-                                TEXT_FIELD_LIST.get(0).requestFocus();
-                            } else {
-                                TEXT_FIELD_LIST.get(thisIndex + 1).requestFocus();
-                            }
-                            break;
-                        }
-                        default: {
-                            break;
+                    } else if (right.equals(keyName)) {
+                        //如果当前焦点在最后一个输入框,键盘点击向右箭头 ➡ ,焦点就会给到第一个输入框
+                        //否则下一个输入框就会获得焦点
+                        if (thisIndex == fillChars.length - 1) {
+                            TEXT_FIELD_LIST.get(0).requestFocus();
+                        } else {
+                            TEXT_FIELD_LIST.get(thisIndex + 1).requestFocus();
                         }
                     }
                 }
@@ -239,7 +237,7 @@ public class WordCompletionScene extends CountdownScene<Object> {
         boolean isRight = true;
         for (int i = 0; i < fillChars.length; i++) {
             TextField fill = TEXT_FIELD_LIST.get(i);
-            if (!String.valueOf(fillChars[i]).equals(fill.getText())) {
+            if (!String.valueOf(fillChars[i]).equalsIgnoreCase(fill.getText())) {
                 isRight = false;
                 break;
             }
@@ -253,7 +251,7 @@ public class WordCompletionScene extends CountdownScene<Object> {
             textField.clear();
             return textField;
         }
-        TextField textField = super.getTextField(width);
+        TextField textField = getTextField(width);
         TEXT_FIELD_LIST.add(textField);
         return textField;
     }

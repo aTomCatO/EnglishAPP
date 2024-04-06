@@ -42,14 +42,14 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
     public static int dataIndex;
     protected Scene scene;
 
-    protected AnchorPane anchorPane;
-    public static final Dialog<ButtonType> DIALOG = new Dialog<>();
     public static final Button DIALOG_OK = (Button) DIALOG.getDialogPane().lookupButton(ButtonType.OK);
+    public static final Dialog<ButtonType> DIALOG = new Dialog<>();
 
     static {
         DIALOG.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
     }
 
+    protected final AnchorPane anchorPane = new AnchorPane();
     /**
      * 退出按钮
      */
@@ -67,10 +67,22 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
      */
     private final ServiceFunctionExecutor<T> loadDataExecutor = new ServiceFunctionExecutor<>(this);
 
-    public AbstractScene() {
-        initScene();
-        bindEvent();
-        extend();
+    public static List<Tab> addTab() {
+        List<Tab> tabList = new ArrayList<>();
+        for (Dictionary dictionary : DICTIONARY_LIST) {
+            Tab tab = new Tab(dictionary.getEn());
+
+            ListView<Object> listView = new ListView<>();
+            tab.setContent(listView);
+
+            listView.getItems().add(dictionary.getZh());
+            List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
+            if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
+                listView.getItems().addAll(dictionaryCorpusList);
+            }
+            tabList.add(tab);
+        }
+        return tabList;
     }
 
     /**
@@ -78,7 +90,6 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
      * 控件对象在这里创建
      */
     public void initScene() {
-        anchorPane = new AnchorPane();
         anchorPane.setStyle("-fx-background-color: pink");
         scene = new Scene(anchorPane);
     }
@@ -93,6 +104,18 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
      * 为场景绑定事件
      */
     public abstract void bindEvent();
+
+    public void init() {
+        initScene();
+        bindEvent();
+        extend();
+    }
+
+    /**
+     * 构建对象时的额外扩展，根据子类需求进行实现
+     */
+    public void extend() {
+    }
 
     public static Label getLabel(int fontSize) {
         Label label = new Label();
@@ -115,36 +138,11 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
         return textField;
     }
 
-    public static List<Tab> addTab() {
-        List<Tab> tabList = new ArrayList<>();
-        for (int i = 0; i < DICTIONARY_LIST.size(); i++) {
-            Dictionary dictionary = DICTIONARY_LIST.get(i);
-            Tab tab = new Tab(dictionary.getEn());
-
-            ListView<Object> listView = new ListView<>();
-            tab.setContent(listView);
-
-            listView.getItems().add(dictionary.getZh());
-            List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
-            if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
-                listView.getItems().addAll(dictionaryCorpusList);
-            }
-            tabList.add(tab);
-        }
-        return tabList;
-    }
-
     /**
      * 加载场景数据
      */
     public void loadData() {
         this.loadDataExecutor.restart();
-    }
-
-    /**
-     * 其他扩展
-     */
-    public void extend() {
     }
 
     /**

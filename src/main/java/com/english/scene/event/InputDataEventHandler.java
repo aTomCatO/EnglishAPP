@@ -19,18 +19,19 @@ public class InputDataEventHandler implements EventHandler<ActionEvent> {
     public static final InputDataEventHandler inputDataEventHandler = new InputDataEventHandler();
     private final OkActionEvent okActionEvent = new OkActionEvent();
     private final GridPane gridPane = new GridPane();
-    private final Label enLabel = getLabel("英语单词: ", 26);
     private final TextField inputEn = getTextField(666);
-    private final Label zhLabel = getLabel("中文翻译: ", 26);
     private final TextField inputZh = getTextField(666);
-    private final Label enTextLabel = getLabel("单词例句: ", 26);
     private final TextField inputEnText = getTextField(666);
-    private final Label zhTextLabel = getLabel("例句翻译: ", 26);
     private final TextField inputZhText = getTextField(666);
 
     private InputDataEventHandler() {
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setVgap(6.6);
+
+        Label enLabel = getLabel("英语单词: ", 26);
+        Label zhLabel = getLabel("中文翻译: ", 26);
+        Label enTextLabel = getLabel("单词例句: ", 26);
+        Label zhTextLabel = getLabel("例句翻译: ", 26);
 
         gridPane.add(enLabel, 1, 0);
         gridPane.add(inputEn, 2, 0);

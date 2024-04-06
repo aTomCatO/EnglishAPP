@@ -28,30 +28,30 @@ import java.util.List;
  */
 @Data
 public class MainScene extends AbstractScene<Object> {
-    private static final TextField search = new TextField();
+    private final TextField search = new TextField();
 
-    private static final Button searchButton = new Button("查词");
+    private final Button searchButton = new Button("查词");
 
-    private static final MenuBar functionBar = new MenuBar();
-    private static final Menu functionMenu = new Menu("功能");
+    private final MenuBar functionBar = new MenuBar();
+    private final Menu functionMenu = new Menu("功能");
 
-    private static final Menu wordFunction = new Menu("单词训练");
-    private static final MenuItem wordReciteButton = new MenuItem("单词背诵");
-    private static final MenuItem wordBrowseButton = new MenuItem("单词浏览");
-    private static final MenuItem wordCompletionButton = new MenuItem("单词补全");
-    private static final MenuItem readSentenceFillWordButton = new MenuItem("读句填词");
+    private final Menu wordFunction = new Menu("单词训练");
+    private final MenuItem wordReciteButton = new MenuItem("单词背诵");
+    private final MenuItem wordBrowseButton = new MenuItem("单词浏览");
+    private final MenuItem wordCompletionButton = new MenuItem("单词补全");
+    private final MenuItem readSentenceFillWordButton = new MenuItem("读句填词");
 
-    private static final Menu sentenceFunction = new Menu("语句训练");
-    private static final MenuItem sentenceWriteFromMemory = new MenuItem("语句默写");
-    private static final Menu gameFunction = new Menu("竞赛");
-    private static final MenuItem wordCompletionGameButton = new MenuItem("单词补全竞赛");
-    private static final MenuItem wordMeaningSelectionButton = new MenuItem("单词选义竞赛");
-    private static final Menu saveFunction = new Menu("导入数据");
-    private static final MenuItem inputButton = new MenuItem("导入");
-    private static final MenuItem importDictionaryFileButton = new MenuItem("导入词典");
-    private static final MenuItem importCorpusFileButton = new MenuItem("导入文集");
-    private static final TabPane tabPane = new TabPane();
-    private static final EventHandler<Event> importFileHandler = new EventHandler<Event>() {
+    private final Menu sentenceFunction = new Menu("语句训练");
+    private final MenuItem sentenceWriteFromMemory = new MenuItem("语句默写");
+    private final Menu gameFunction = new Menu("竞赛");
+    private final MenuItem wordCompletionGameButton = new MenuItem("单词补全竞赛");
+    private final MenuItem wordMeaningSelectionButton = new MenuItem("单词选义竞赛");
+    private final Menu saveFunction = new Menu("导入数据");
+    private final MenuItem inputButton = new MenuItem("导入");
+    private final MenuItem importDictionaryFileButton = new MenuItem("导入词典");
+    private final MenuItem importCorpusFileButton = new MenuItem("导入文集");
+    private final TabPane tabPane = new TabPane();
+    private final EventHandler<Event> importFileHandler = new EventHandler<Event>() {
         @Override
         public void handle(Event event) {
             Stage stage = new Stage();

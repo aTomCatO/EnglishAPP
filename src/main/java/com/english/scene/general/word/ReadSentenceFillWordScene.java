@@ -19,10 +19,10 @@ import java.util.regex.Pattern;
  * 读句填词场景
  */
 public class ReadSentenceFillWordScene extends AbstractScene<Object> {
-    private static final Label enLabel = getLabel(16);
-    private static final Label zhTextLabel = new Label();
+    private final Label enLabel = getLabel(16);
+    private final Label zhTextLabel = new Label();
 
-    private static final TextFlow enTextFlow = new TextFlow();
+    private final TextFlow enTextFlow = new TextFlow();
 
     @Override
     public void initScene() {

@@ -1,7 +1,6 @@
 package com.english.scene.event;
 
 import com.english.EnglishAppStart;
-import com.english.scene.AbstractScene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -13,6 +12,8 @@ import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.english.scene.AbstractScene.*;
 
 /**
  * @author XYC
@@ -39,13 +40,13 @@ public class GameEventHandler implements EventHandler<ActionEvent> {
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setVgap(6.6);
 
-        Label sizeLabel = AbstractScene.getLabel(26);
+        Label sizeLabel = getLabel(26);
         sizeLabel.setText("词数: ");
         inputSize.setPrefWidth(88);
         inputSize.setPromptText("计划词数");
         inputSize.setText("10");
 
-        Label durationLabel = AbstractScene.getLabel(26);
+        Label durationLabel = getLabel(26);
         durationLabel.setText("时长: ");
         List<Integer> items = new ArrayList<>();
         for (int i = 1; i < 7; i++) {
@@ -63,10 +64,10 @@ public class GameEventHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent event) {
         eventTarget = event;
-        AbstractScene.DIALOG_OK.setOnAction(okActionEvent);
-        AbstractScene.setDialog("竞赛", 266, 166);
-        AbstractScene.DIALOG.setGraphic(gridPane);
-        AbstractScene.DIALOG.show();
+        DIALOG_OK.setOnAction(okActionEvent);
+        setDialog("竞赛", 266, 166);
+        DIALOG.setGraphic(gridPane);
+        DIALOG.show();
     }
 
 
@@ -76,7 +77,7 @@ public class GameEventHandler implements EventHandler<ActionEvent> {
             String size = inputSize.getText();
             // 匹配是否是不为 0 开头的数字
             if (size.matches("^[1-9]\\d*$")) {
-                AbstractScene.dataSize = Integer.parseInt(size);
+                dataSize = Integer.parseInt(size);
                 Integer duration = durationChoice.getValue() * 60;
 
                 // 获取事件源
@@ -84,8 +85,8 @@ public class GameEventHandler implements EventHandler<ActionEvent> {
                 String sceneName = (String) menuItem.getUserData();
                 EnglishAppStart.convertScene(sceneName, duration);
             }
-            AbstractScene.DIALOG_OK.setOnAction(null);
-            AbstractScene.DIALOG.setGraphic(null);
+            DIALOG_OK.setOnAction(null);
+            DIALOG.setGraphic(null);
         }
     }
 }

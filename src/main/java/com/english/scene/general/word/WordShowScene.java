@@ -11,9 +11,9 @@ import javafx.scene.layout.FlowPane;
  * 单词展示场景
  */
 public class WordShowScene extends AbstractScene<Object> {
-    private static final FlowPane flowPane = new FlowPane();
-    private static final ListView<String> enListView = new ListView<>();
-    private static final ListView<String> zhListView = new ListView<>();
+    private final FlowPane flowPane = new FlowPane();
+    private final ListView<String> enListView = new ListView<>();
+    private final ListView<String> zhListView = new ListView<>();
 
     @Override
     public void initScene() {

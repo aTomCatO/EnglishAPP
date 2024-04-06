@@ -16,10 +16,10 @@ import javafx.util.Duration;
  * @author XYC
  * 单词浏览场景
  */
-public class WordBrowseScene extends AbstractScene {
-    private static final Label enPreviousLabel = new Label();
-    private static final Label enCurrentLabel = new Label();
-    private static final Label zhCurrentLabel = new Label();
+public class WordBrowseScene extends AbstractScene<Object> {
+    private final Label enPreviousLabel = new Label();
+    private final Label enCurrentLabel = new Label();
+    private final Label zhCurrentLabel = new Label();
 
     private final ScheduledService<Integer> scheduledService = new ScheduledService<Integer>() {
         {
@@ -59,7 +59,6 @@ public class WordBrowseScene extends AbstractScene {
         zhCurrentLabel.setFont(Font.font(23));
 
         addExitButton();
-        addNextButton();
         addSceneVBox();
         sceneVBox.getChildren().addAll(enPreviousLabel, enCurrentLabel, zhCurrentLabel);
     }

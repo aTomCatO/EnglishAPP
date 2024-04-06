@@ -54,47 +54,46 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public void saveByFile(String filePath) {
         String fileSuffix = "txt";
-        if (!filePath.endsWith(fileSuffix)) {
-            return;
-        }
-        Properties properties = FileUtils.load(filePath);
-        //首字母集合
-        Set<String> initialSet = properties.stringPropertyNames();
-        LinkedBlockingDeque<List<Dictionary>> dictionaryDeque = new LinkedBlockingDeque<>(8);
-        AtomicBoolean end = new AtomicBoolean(true);
-        //生产者线程,负责将单词文本里的单词和中文翻译进行抽取
-        THREAD_POOL.execute(() -> {
-            String regex = "([a-zA-Z]+)\\s([a-zA-Z&.]+\\.[\u4e00-\u9fa5\\pP]+(\\s[a-zA-Z&.]+\\.[\u4e00-\u9fa5\\pP]+)*)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher;
-            Iterator<String> iterator = initialSet.stream().iterator();
-            while (iterator.hasNext()) {
-                List<Dictionary> dictionaryList = new ArrayList<>();
-                String wordText = iterator.next();
-                matcher = pattern.matcher(wordText);
-                while (matcher.find()) {
-                    String en = matcher.group(1);
-                    String zh = matcher.group(2);
-                    Dictionary dictionary = new Dictionary(en, zh);
-                    dictionaryList.add(dictionary);
+        Properties properties;
+        if (filePath.endsWith(fileSuffix) && (properties = FileUtils.load(filePath)) != null) {
+            //首字母集合
+            Set<String> initialSet = properties.stringPropertyNames();
+            LinkedBlockingDeque<List<Dictionary>> dictionaryDeque = new LinkedBlockingDeque<>(8);
+            AtomicBoolean end = new AtomicBoolean(true);
+            //生产者线程,负责将单词文本里的单词和中文翻译进行抽取
+            THREAD_POOL.execute(() -> {
+                String regex = "([a-zA-Z]+)\\s([a-zA-Z&.]+\\.[\u4e00-\u9fa5\\pP]+(\\s[a-zA-Z&.]+\\.[\u4e00-\u9fa5\\pP]+)*)";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher;
+                Iterator<String> iterator = initialSet.stream().iterator();
+                while (iterator.hasNext()) {
+                    List<Dictionary> dictionaryList = new ArrayList<>();
+                    String wordText = iterator.next();
+                    matcher = pattern.matcher(wordText);
+                    while (matcher.find()) {
+                        String en = matcher.group(1);
+                        String zh = matcher.group(2);
+                        Dictionary dictionary = new Dictionary(en, zh);
+                        dictionaryList.add(dictionary);
+                    }
+                    dictionaryDeque.add(dictionaryList);
                 }
-                dictionaryDeque.add(dictionaryList);
-            }
-            end.set(false);
-        });
-        //消费者线程,负责调用Dao将数据集保存到数据库
-        THREAD_POOL.execute(() -> {
-                    while (end.get() || !dictionaryDeque.isEmpty()) {
-                        try {
-                            //队列没有元素时将会阻塞
-                            List<Dictionary> dictionaryList = dictionaryDeque.takeLast();
-                            save(dictionaryList);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                end.set(false);
+            });
+            //消费者线程,负责调用Dao将数据集保存到数据库
+            THREAD_POOL.execute(() -> {
+                        while (end.get() || !dictionaryDeque.isEmpty()) {
+                            try {
+                                //队列没有元素时将会阻塞
+                                List<Dictionary> dictionaryList = dictionaryDeque.takeLast();
+                                save(dictionaryList);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
-        );
+            );
+        }
     }
 
     @Override

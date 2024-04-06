@@ -55,24 +55,23 @@ public class CorpusServiceImpl implements CorpusService {
     @Override
     public void saveByFile(String filePath) {
         String fileSuffix = "txt";
-        if (!filePath.endsWith(fileSuffix)) {
-            return;
-        }
-        Properties properties = FileUtils.load(filePath);
-        Set<String> enSet = properties.stringPropertyNames();
-        List<Corpus> corpusList = new ArrayList<>();
-        String regex = "([\\w\\s\\pP]+)([\u4e00-\u9fa5\\w\\pP]+)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher;
-        for (String en : enSet) {
-            String text = properties.getProperty(en);
-            matcher = pattern.matcher(text);
-            while (matcher.find()) {
-                Corpus corpus = new Corpus(en, matcher.group(1), matcher.group(2));
-                corpusList.add(corpus);
+        Properties properties;
+        if (filePath.endsWith(fileSuffix) && (properties = FileUtils.load(filePath)) != null) {
+            Set<String> enSet = properties.stringPropertyNames();
+            List<Corpus> corpusList = new ArrayList<>();
+            String regex = "([\\w\\s\\pP]+)([\u4e00-\u9fa5\\w\\pP]+)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher;
+            for (String en : enSet) {
+                String text = properties.getProperty(en);
+                matcher = pattern.matcher(text);
+                while (matcher.find()) {
+                    Corpus corpus = new Corpus(en, matcher.group(1), matcher.group(2));
+                    corpusList.add(corpus);
+                }
             }
+            save(corpusList);
         }
-        save(corpusList);
     }
 
     @Override
