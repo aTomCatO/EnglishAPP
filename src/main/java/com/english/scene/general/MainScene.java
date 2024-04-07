@@ -37,7 +37,7 @@ public class MainScene extends AbstractScene<Object> {
 
     private final Menu wordFunction = new Menu("单词训练");
     private final MenuItem wordReciteButton = new MenuItem("单词背诵");
-    private final MenuItem wordBrowseButton = new MenuItem("单词浏览");
+    private final MenuItem wordBrowseButton = new MenuItem("单词慢放");
     private final MenuItem wordCompletionButton = new MenuItem("单词补全");
     private final MenuItem readSentenceFillWordButton = new MenuItem("读句填词");
 

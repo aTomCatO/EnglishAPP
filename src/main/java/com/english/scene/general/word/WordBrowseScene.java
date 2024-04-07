@@ -1,6 +1,7 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
+import com.english.Utils.TextToSpeechUtil;
 import com.english.scene.AbstractScene;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
@@ -8,8 +9,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 /**
@@ -17,6 +25,8 @@ import javafx.util.Duration;
  * 单词浏览场景
  */
 public class WordBrowseScene extends AbstractScene<Object> {
+    private static final String AUDIO_PATH = System.getProperty("user.dir") + "\\audio\\";
+    private Path audioPath = null;
     private final Label enPreviousLabel = new Label();
     private final Label enCurrentLabel = new Label();
     private final Label zhCurrentLabel = new Label();
@@ -36,15 +46,22 @@ public class WordBrowseScene extends AbstractScene<Object> {
                         dataIndex = 0;
                         DICTIONARY_LIST.clear();
                         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
+                    } else {
+                        dataIndex += 1;
                     }
-                    return dataIndex += 1;
+                    // 预备当前单词的音频
+                    prepareAudio(DICTIONARY_LIST.get(dataIndex).getEn());
+                    return dataIndex;
                 }
 
                 @Override
                 protected void updateValue(Integer index) {
-                    enPreviousLabel.setText(DICTIONARY_LIST.get(index - 1).getEn());
+                    if (index > 0) {
+                        enPreviousLabel.setText(DICTIONARY_LIST.get(index - 1).getEn());
+                    }
                     enCurrentLabel.setText(DICTIONARY_LIST.get(index).getEn());
                     zhCurrentLabel.setText(DICTIONARY_LIST.get(index).getZh());
+                    playMedia();
                 }
             };
         }
@@ -65,10 +82,12 @@ public class WordBrowseScene extends AbstractScene<Object> {
 
     @Override
     public Object doCall() {
-        dataIndex = 0;
         dataSize = 30;
+        dataIndex = 0;
         DICTIONARY_LIST.clear();
         DICTIONARY_LIST.addAll(DICTIONARY_SERVICE.queryRandom(dataSize));
+        // 预备当前单词的音频
+        prepareAudio(DICTIONARY_LIST.get(dataIndex).getEn());
         return null;
     }
 
@@ -76,6 +95,7 @@ public class WordBrowseScene extends AbstractScene<Object> {
     public void updateUI(Object value) {
         enCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getEn());
         zhCurrentLabel.setText(DICTIONARY_LIST.get(dataIndex).getZh());
+        playMedia();
     }
 
     @Override
@@ -100,5 +120,32 @@ public class WordBrowseScene extends AbstractScene<Object> {
         loadData();
         scheduledService.start();
         return scene;
+    }
+
+    /**
+     * 预备音频
+     *
+     * @param audioName 音频文件名
+     */
+    public void prepareAudio(String audioName) {
+        String filePath = AUDIO_PATH + audioName + ".mp3";
+        audioPath = Paths.get(filePath);
+        if (!Files.exists(audioPath)) {
+            if (!TextToSpeechUtil.toSpeech(audioName, filePath)) {
+                audioPath = null;
+            }
+        }
+    }
+
+    /**
+     * 播放音频
+     */
+    public void playMedia() {
+        if (audioPath != null) {
+            URI uri = audioPath.toUri();
+            Media media = new Media(uri.toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
+        }
     }
 }

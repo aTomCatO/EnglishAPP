@@ -78,7 +78,7 @@ public class CorpusServiceImpl implements CorpusService {
     public Corpus translate(String sentence, String from, String to) {
         Corpus corpus = null;
         try {
-            String transResult = TransUtil.getTransResult(sentence, from, to);
+            String transResult = TransUtil.translate(sentence, from, to);
             if (StringUtils.hasText(transResult)) {
                 corpus = new Corpus();
                 Class<Corpus> aClass = Corpus.class;

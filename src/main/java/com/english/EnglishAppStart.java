@@ -41,7 +41,6 @@ public class EnglishAppStart extends Application {
             primaryStage.setScene(scene.run(args));
         }
     }
-
     public static void main(String[] args) {
         launch(args);
     }

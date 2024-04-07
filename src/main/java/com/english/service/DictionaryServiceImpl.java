@@ -112,7 +112,7 @@ public class DictionaryServiceImpl implements DictionaryService {
                 f1.setAccessible(true);
                 f2.setAccessible(true);
                 f1.set(dictionary, word);
-                f2.set(dictionary, TransUtil.getTransResult(word, from, to));
+                f2.set(dictionary, TransUtil.translate(word, from, to));
                 dictionaryList.add(dictionary);
             } catch (IOException | NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);

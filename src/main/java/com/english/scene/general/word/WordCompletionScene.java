@@ -45,7 +45,7 @@ public class WordCompletionScene extends CountdownScene<Object> {
     /**
      * 缺少的字母数组，将当前单词中挖去的字母保存在该字符数组中
      */
-    protected char[] fillChars;
+    protected static char[] fillChars;
 
 
     @Override

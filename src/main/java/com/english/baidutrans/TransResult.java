@@ -5,9 +5,9 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 翻译结果 实体
+ * 翻译结果
  *
- * @author XYC
+ * @author 百度
  */
 @Data
 public class TransResult {

@@ -19,37 +19,32 @@ import java.util.Map;
 
 /**
  * @author XYC
- * 请求工具类
+ * Http请求工具类
  */
 public class HttpUtil {
     /**
      * get 请求
      *
-     * @param url
-     * @return
-     * @throws IOException
+     * @param url 请求地址
      */
-    public static String doGetStr(String url) throws IOException {
+    public static String doGet(String url) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
         CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
         HttpEntity entity = httpResponse.getEntity();
         if (entity != null) {
-            String resContent = EntityUtils.toString(entity, "UTF-8");
-            return resContent;
+            return EntityUtils.toString(entity, "UTF-8");
         }
         return null;
     }
 
     /**
-     * post 请求 String装填
+     * post 请求
      *
-     * @param url
-     * @param reqContent
-     * @return
-     * @throws IOException
+     * @param url        请求地址
+     * @param reqContent 请求内容
      */
-    public static String doPostStr(String url, String reqContent) throws IOException {
+    public static String doPost(String url, String reqContent) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         if (StringUtils.hasText(reqContent)) {
@@ -58,38 +53,34 @@ public class HttpUtil {
         CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
         HttpEntity entity = httpResponse.getEntity();
         if (entity != null) {
-            String resContent = EntityUtils.toString(entity, "UTF-8");
-            return resContent;
+            return EntityUtils.toString(entity, "UTF-8");
         }
         return null;
     }
 
     /**
-     * post 请求 String装填
+     * post 请求
      *
-     * @param url
-     * @param reqContent
-     * @return
-     * @throws IOException
+     * @param url        请求地址
+     * @param reqContent 请求内容
      */
-    public static String doPostStr(String url, Map<String, String> reqContent) throws IOException {
+    public static String doPost(String url, Map<String, String> reqContent) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
-        //装填参数
+        // 装填参数
         ArrayList<NameValuePair> names = new ArrayList<>();
         if (reqContent != null) {
             for (Map.Entry<String, String> entry : reqContent.entrySet()) {
                 names.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
             }
         }
-        //设置参数到请求对象中
+        // 设置参数到请求对象中
         httpPost.setEntity(new UrlEncodedFormEntity(names, "UTF-8"));
 
         CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
         HttpEntity entity = httpResponse.getEntity();
         if (entity != null) {
-            String resContent = EntityUtils.toString(entity, "UTF-8");
-            return resContent;
+            return EntityUtils.toString(entity, "UTF-8");
         }
         return null;
     }

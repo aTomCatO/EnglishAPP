@@ -42,13 +42,13 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
     public static int dataIndex;
     protected Scene scene;
 
-    public static final Button DIALOG_OK = (Button) DIALOG.getDialogPane().lookupButton(ButtonType.OK);
     public static final Dialog<ButtonType> DIALOG = new Dialog<>();
 
     static {
         DIALOG.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
     }
 
+    public static final Button DIALOG_OK = (Button) DIALOG.getDialogPane().lookupButton(ButtonType.OK);
     protected final AnchorPane anchorPane = new AnchorPane();
     /**
      * 退出按钮
