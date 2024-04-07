@@ -25,11 +25,22 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
      * 计时关闭弹窗任务
      */
     private Task<Boolean> timedCloseDialogTask;
-    private static final Label enTextLabel = getLabel(13);
-    private static final Label zhTextLabel = getLabel(13);
-    private static final TextArea inputTextArea = new TextArea();
-    private static final Label correctRateLabel = getLabel(16);
-    private static final Label questionLabel = getLabel(13);
+    /**
+     * 显示英语句子的label
+     */
+    private final Label enTextLabel = getLabel(13);
+    /**
+     * 显示英语句子的翻译的label
+     */
+    private final Label zhTextLabel = getLabel(13);
+    /**
+     * 默写输入文本域
+     */
+    private final TextArea inputTextArea = new TextArea();
+    /**
+     * 显示默写准确率的label
+     */
+    private final Label correctRateLabel = getLabel(16);
     private Integer correctCount;
 
     @Override
@@ -68,8 +79,8 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
     public void updateQuestion() {
         String enText = CORPUS_LIST.get(dataIndex).getEnText();
         InstanceUtils.LOGGER.info(enText);
-        questionLabel.setText(enText);
         zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
+        DIALOG.setContentText(enText);
         DIALOG.show();
 
         timedCloseDialogTask = new Task<Boolean>() {
@@ -147,7 +158,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
                 timedCloseDialogTask.cancel();
             }
             enTextLabel.setText(null);
-            DIALOG.setGraphic(null);
+            DIALOG.setContentText(null);
             EnglishAppStart.convertScene("com.english.scene.general.MainScene");
         });
     }
@@ -156,7 +167,6 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
     @Override
     public Scene run() {
         setDialog("请看题", 366, 166);
-        DIALOG.setGraphic(questionLabel);
         return super.run();
     }
 
