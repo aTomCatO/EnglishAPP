@@ -1,6 +1,7 @@
 package com.english.Utils;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,8 +15,9 @@ import java.util.*;
 /**
  * @author XYC
  */
-@Slf4j
+
 public class FileUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
 
     /**
      * 加载配置文件
@@ -33,7 +35,7 @@ public class FileUtils {
             inputStream = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
         }
         if (inputStream == null) {
-            log.error("无法从指定的文件路径下读取到资源！filePath:{}", filePath);
+            LOGGER.error("无法从指定的文件路径下读取到资源！filePath:{}", filePath);
             return null;
         }
         Properties properties = null;
@@ -42,12 +44,12 @@ public class FileUtils {
             properties = new Properties();
             properties.load(reader);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            LOGGER.error(e.getMessage());
         } finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
-                log.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             }
         }
         return properties;

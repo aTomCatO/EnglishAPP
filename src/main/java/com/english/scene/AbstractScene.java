@@ -77,7 +77,7 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
 
             listView.getItems().add(dictionary.getZh());
             List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
-            if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
+            if (dictionaryCorpusList != null && !dictionaryCorpusList.isEmpty()) {
                 listView.getItems().addAll(dictionaryCorpusList);
             }
             tabList.add(tab);
@@ -154,7 +154,6 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
     }
 
     /**
-     * 、
      * 运行场景，传递场景参数
      */
     public Scene run(Object... args) {
