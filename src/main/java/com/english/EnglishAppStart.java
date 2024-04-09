@@ -46,7 +46,7 @@ public class EnglishAppStart extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         primaryStage = stage;
         primaryStage.setAlwaysOnTop(true);
         primaryStage.setX(1556);
@@ -62,7 +62,7 @@ public class EnglishAppStart extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         BaseService.THREAD_POOL.shutdownNow();
     }
 }

@@ -1,8 +1,8 @@
 package com.english.scene.game;
 
 import com.english.EnglishAppStart;
-import com.english.Utils.InstanceUtils;
 import com.english.service.BaseService;
+import com.english.util.InstanceUtil;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -99,7 +99,7 @@ public class WordMeaningSelectionGameScene extends CountdownScene<Object> {
         String en = DICTIONARY_LIST.get(dataIndex).getEn();
         String zh = DICTIONARY_LIST.get(dataIndex).getZh();
         enCurrentLabel.setText(en);
-        InstanceUtils.LOGGER.info(zh);
+        InstanceUtil.LOGGER.info(zh);
 
         int zhAccurateLabelIndex = RANDOM.nextInt(4) + 1;
         TreeSet<Integer> wrongIndexSet = generateWrongIndex();

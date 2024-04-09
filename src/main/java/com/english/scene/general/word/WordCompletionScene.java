@@ -1,8 +1,8 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
-import com.english.Utils.InstanceUtils;
 import com.english.scene.game.CountdownScene;
+import com.english.util.InstanceUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -131,7 +131,7 @@ public class WordCompletionScene extends CountdownScene<Object> {
         int beforeSize = TEXT_FIELD_LIST.size();
 
         String en = DICTIONARY_LIST.get(dataIndex).getEn();
-        InstanceUtils.LOGGER.info(en);
+        InstanceUtil.LOGGER.info(en);
         char[] enChars = en.toCharArray();
         int enLength = enChars.length;
         // 计算需要填补的字母数

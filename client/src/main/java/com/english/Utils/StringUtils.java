@@ -1,4 +1,4 @@
-package com.english.Utils;
+package com.english.util;
 
 import java.util.HashMap;
 import java.util.Locale;

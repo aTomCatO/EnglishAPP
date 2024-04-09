@@ -9,8 +9,6 @@ import com.english.service.CorpusService;
 import com.english.service.CorpusServiceImpl;
 import com.english.service.DictionaryService;
 import com.english.service.DictionaryServiceImpl;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -164,12 +162,7 @@ public abstract class AbstractScene<T> implements ServiceFunction<T> {
      * 默认的退出按钮事件（回到主场景）
      */
     public void exitButtonEvent() {
-        exitButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
-            }
-        });
+        exitButton.setOnAction(event -> EnglishAppStart.convertScene("com.english.scene.general.MainScene"));
     }
 
     public void addExitButton() {

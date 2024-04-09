@@ -1,7 +1,7 @@
 package com.english.scene.general.word;
 
 import com.english.Client;
-import com.english.Utils.StringUtils;
+import com.english.util.StringUtils;
 import com.english.scene.AbstractScene;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

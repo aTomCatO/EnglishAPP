@@ -1,12 +1,10 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
-import com.english.Utils.TextToSpeechUtil;
 import com.english.scene.AbstractScene;
+import com.english.util.TextToSpeechUtil;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.media.Media;
@@ -39,9 +37,9 @@ public class WordBrowseScene extends AbstractScene<Object> {
 
         @Override
         protected Task<Integer> createTask() {
-            return new Task<Integer>() {
+            return new Task<>() {
                 @Override
-                protected Integer call() throws Exception {
+                protected Integer call() {
                     if (dataIndex == dataSize - 1) {
                         dataIndex = 0;
                         DICTIONARY_LIST.clear();
@@ -105,13 +103,10 @@ public class WordBrowseScene extends AbstractScene<Object> {
 
     @Override
     public void exitButtonEvent() {
-        exitButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                scheduledService.cancel();
-                scheduledService.reset();
-                EnglishAppStart.convertScene("com.english.scene.general.MainScene");
-            }
+        exitButton.setOnAction(event -> {
+            scheduledService.cancel();
+            scheduledService.reset();
+            EnglishAppStart.convertScene("com.english.scene.general.MainScene");
         });
     }
 

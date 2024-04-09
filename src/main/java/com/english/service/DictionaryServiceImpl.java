@@ -1,6 +1,5 @@
 package com.english.service;
 
-import com.english.Utils.FileUtils;
 import com.english.baidutrans.TransUtil;
 import com.english.entity.Corpus;
 import com.english.entity.Dictionary;
@@ -8,6 +7,8 @@ import com.english.repository.CorpusDao;
 import com.english.repository.CorpusDaoImpl;
 import com.english.repository.DictionaryDao;
 import com.english.repository.DictionaryDaoImpl;
+import com.english.util.FileUtil;
+import com.english.util.InstanceUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -55,7 +56,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     public void saveByFile(String filePath) {
         String fileSuffix = "txt";
         Properties properties;
-        if (filePath.endsWith(fileSuffix) && (properties = FileUtils.load(filePath)) != null) {
+        if (filePath.endsWith(fileSuffix) && (properties = FileUtil.load(filePath)) != null) {
             //首字母集合
             Set<String> initialSet = properties.stringPropertyNames();
             LinkedBlockingDeque<List<Dictionary>> dictionaryDeque = new LinkedBlockingDeque<>(8);
@@ -88,7 +89,7 @@ public class DictionaryServiceImpl implements DictionaryService {
                                 List<Dictionary> dictionaryList = dictionaryDeque.takeLast();
                                 save(dictionaryList);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                InstanceUtil.LOGGER.error(e.getMessage());
                             }
                         }
                     }
@@ -101,7 +102,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         //"select * from dictionary d left join corpus c on d.en=c.en where d." + from + " like '%" + word + "%'"
         List<Dictionary> dictionaryList =
                 dictionaryDao.select("select * from dictionary where " + from + " like '%" + word + "%'");
-        if (dictionaryList.size() > 0) {
+        if (!dictionaryList.isEmpty()) {
             addCorpus(dictionaryList);
         } else {
             try {

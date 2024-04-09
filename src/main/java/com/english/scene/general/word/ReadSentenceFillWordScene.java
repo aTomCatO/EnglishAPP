@@ -1,8 +1,8 @@
 package com.english.scene.general.word;
 
 import com.english.EnglishAppStart;
-import com.english.Utils.InstanceUtils;
 import com.english.scene.AbstractScene;
+import com.english.util.InstanceUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -106,7 +106,7 @@ public class ReadSentenceFillWordScene extends AbstractScene<Object> {
         Matcher matcher = pattern.matcher(enText);
         while (matcher.find()) {
             String matchedEn = matcher.group();
-            InstanceUtils.LOGGER.info(matchedEn);
+            InstanceUtil.LOGGER.info(matchedEn);
             int beginIndex = enText.indexOf(matchedEn);
             int endIndex = beginIndex + matchedEn.length();
             TextField textField = getTextField(78);

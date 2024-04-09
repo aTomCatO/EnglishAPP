@@ -1,6 +1,6 @@
 package com.english.baidutrans;
 
-import com.english.Utils.InstanceUtils;
+import com.english.util.InstanceUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

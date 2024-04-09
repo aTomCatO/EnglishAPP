@@ -1,6 +1,6 @@
 package com.english.baidutrans;
 
-import com.english.Utils.StringUtils;
+import com.english.util.StringUtil;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -62,7 +62,7 @@ public class HttpUtil {
         String responseData;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(url);
-            if (StringUtils.hasText(reqContent)) {
+            if (StringUtil.hasText(reqContent)) {
                 httpPost.setEntity(new StringEntity(reqContent, StandardCharsets.UTF_8));
             }
             responseData = httpClient.execute(httpPost, responseHandler);

@@ -57,7 +57,7 @@ public class WordReciteScene extends AbstractScene<Object> {
         enCurrentLabel.setText(dictionary.getEn());
         zhLabel.setText(dictionary.getZh());
         List<Corpus> dictionaryCorpusList = dictionary.getCorpusList();
-        if (dictionaryCorpusList != null && dictionaryCorpusList.size() > 0) {
+        if (dictionaryCorpusList != null && !dictionaryCorpusList.isEmpty()) {
             listView.getItems().addAll(dictionaryCorpusList);
         }
     }

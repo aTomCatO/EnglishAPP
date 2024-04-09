@@ -1,8 +1,8 @@
 package com.english.repository;
 
-import com.english.Utils.FileUtils;
-import com.english.Utils.InstanceUtils;
 import com.english.service.DictionaryServiceImpl;
+import com.english.util.FileUtil;
+import com.english.util.InstanceUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,7 +25,7 @@ public abstract class AbstractDao<T> implements BaseDao<T> {
         String user = null;
         String password = null;
         try {
-            properties = FileUtils.load("D:\\JavaWorld\\Demo\\EnglishApp\\src\\main\\resources\\config.properties");
+            properties = FileUtil.load("D:\\JavaWorld\\Demo\\EnglishApp\\src\\main\\resources\\config.properties");
             if (properties != null) {
                 String driverClass = properties.getProperty("driverClass");
                 url = properties.getProperty("url");
@@ -37,11 +37,11 @@ public abstract class AbstractDao<T> implements BaseDao<T> {
             }
         } catch (SQLException e) {
             String message = e.getMessage();
-            InstanceUtils.LOGGER.error(message);
+            InstanceUtil.LOGGER.error(message);
             String linkFailure = "Communications link failure";
             String unknownData = "Unknown database 'EnglishApp'";
             if (message.contains(linkFailure)) {
-                InstanceUtils.LOGGER.info("原因: MySQL服务已关闭");
+                InstanceUtil.LOGGER.info("原因: MySQL服务已关闭");
                 System.exit(0);
             } else if (message.contains(unknownData)) {
                 try {
@@ -53,11 +53,11 @@ public abstract class AbstractDao<T> implements BaseDao<T> {
                     statement.execute("create table corpus(en varchar(16) comment '单词',enText text comment '例句',zhText text comment '中文翻译')");
                     DictionaryServiceImpl.DICTIONARY_SERVICE.saveByFile("dataFile/dictionary.txt");
                 } catch (SQLException sqlException) {
-                    InstanceUtils.LOGGER.error(sqlException.getMessage());
+                    InstanceUtil.LOGGER.error(sqlException.getMessage());
                 }
             }
         } catch (ClassNotFoundException e) {
-            InstanceUtils.LOGGER.error(e.getMessage());
+            InstanceUtil.LOGGER.error(e.getMessage());
         }
     }
 

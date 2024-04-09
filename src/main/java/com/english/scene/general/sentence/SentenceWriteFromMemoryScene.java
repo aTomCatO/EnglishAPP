@@ -1,10 +1,10 @@
 package com.english.scene.general.sentence;
 
 import com.english.EnglishAppStart;
-import com.english.Utils.InstanceUtils;
-import com.english.Utils.StringUtils;
 import com.english.scene.AbstractScene;
 import com.english.service.BaseService;
+import com.english.util.InstanceUtil;
+import com.english.util.StringUtil;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -78,7 +78,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
 
     public void updateQuestion() {
         String enText = CORPUS_LIST.get(dataIndex).getEnText();
-        InstanceUtils.LOGGER.info(enText);
+        InstanceUtil.LOGGER.info(enText);
         zhTextLabel.setText(CORPUS_LIST.get(dataIndex).getZhText());
         DIALOG.setContentText(enText);
         DIALOG.show();
@@ -112,7 +112,7 @@ public class SentenceWriteFromMemoryScene extends AbstractScene<Object> {
             public void handle(ActionEvent event) {
                 String inputText = inputTextArea.getText();
                 String enSentence = CORPUS_LIST.get(dataIndex).getEnText();
-                if (StringUtils.hasText(inputText)) {
+                if (StringUtil.hasText(inputText)) {
                     // 分别从语句中匹配每一个词
                     Matcher matcherCorrectSentence = PATTERN.matcher(enSentence);
                     Matcher matcherInputSentence = PATTERN.matcher(inputText);

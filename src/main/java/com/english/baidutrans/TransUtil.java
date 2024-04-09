@@ -1,6 +1,6 @@
 package com.english.baidutrans;
 
-import com.english.Utils.InstanceUtils;
+import com.english.util.InstanceUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,7 +22,7 @@ public class TransUtil {
     private static final String appid = "20220323001136339";
     private static final String securityKey = "X_wLubR1NLEq2QAgEWdM";
 
-    private static final ObjectMapper json = InstanceUtils.JSON;
+    private static final ObjectMapper json = InstanceUtil.JSON;
 
     /**
      * 获得翻译结果

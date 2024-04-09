@@ -1,4 +1,4 @@
-package com.english.Utils;
+package com.english.util;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 /**
  * @author XYC
  */
-public class StringUtils {
+public class StringUtil {
     public static String substringRange(String str, String range) {
         String regex1 = "\\[\\d,\\d\\]";
         String regex2 = "\\[\\d,\\d\\)";

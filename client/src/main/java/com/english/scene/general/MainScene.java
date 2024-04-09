@@ -1,7 +1,7 @@
 package com.english.scene.general;
 
 import com.english.Client;
-import com.english.Utils.StringUtils;
+import com.english.util.StringUtils;
 import com.english.entity.Corpus;
 import com.english.scene.AbstractScene;
 import javafx.event.ActionEvent;

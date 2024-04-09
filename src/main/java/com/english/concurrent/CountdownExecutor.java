@@ -6,13 +6,15 @@ import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author XYC
  * 倒计时执行器
  */
-@Data
+@Setter
+@Getter
 public class CountdownExecutor extends ScheduledService<Integer> {
 
     /**
@@ -27,7 +29,7 @@ public class CountdownExecutor extends ScheduledService<Integer> {
     /**
      * 倒计时场景对象
      */
-    private CountdownScene countdownScene;
+    private CountdownScene<?> countdownScene;
 
     private CountdownExecutor() {
         this.countDownLabel = new Label();
@@ -45,9 +47,9 @@ public class CountdownExecutor extends ScheduledService<Integer> {
 
     @Override
     protected Task<Integer> createTask() {
-        return new Task<Integer>() {
+        return new Task<>() {
             @Override
-            protected Integer call() throws Exception {
+            protected Integer call() {
                 return duration--;
             }
 

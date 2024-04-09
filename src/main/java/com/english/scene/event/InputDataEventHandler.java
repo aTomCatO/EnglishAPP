@@ -1,8 +1,8 @@
 package com.english.scene.event;
 
-import com.english.Utils.StringUtils;
 import com.english.entity.Corpus;
 import com.english.entity.Dictionary;
+import com.english.util.StringUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -62,9 +62,9 @@ public class InputDataEventHandler implements EventHandler<ActionEvent> {
             String zh = inputZh.getText();
             String zhText = inputZhText.getText();
             String enText = inputEnText.getText();
-            if (StringUtils.hasText(en) && en.matches(enRegex) && StringUtils.hasText(zh) && zh.matches(zhRegex)) {
+            if (StringUtil.hasText(en) && en.matches(enRegex) && StringUtil.hasText(zh) && zh.matches(zhRegex)) {
                 DICTIONARY_SERVICE.save(new Dictionary(en, zh));
-                if (StringUtils.hasText(zhText) && enText.matches(enTextRegex) && StringUtils.hasText(enText) && zhText.matches(zhTextRegex)) {
+                if (StringUtil.hasText(zhText) && enText.matches(enTextRegex) && StringUtil.hasText(enText) && zhText.matches(zhTextRegex)) {
                     CORPUS_SERVICE.save(new Corpus(en, enText, zhText));
                 }
             }

@@ -1,4 +1,4 @@
-package com.english.Utils;
+package com.english.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +16,8 @@ import java.util.*;
  * @author XYC
  */
 
-public class FileUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
+public class FileUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      * 加载配置文件
@@ -32,7 +32,7 @@ public class FileUtils {
             inputStream = Files.newInputStream(Paths.get(filePath));
         } catch (IOException e) {
             // 从类资源文件中获取
-            inputStream = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+            inputStream = FileUtil.class.getClassLoader().getResourceAsStream(filePath);
         }
         if (inputStream == null) {
             LOGGER.error("无法从指定的文件路径下读取到资源！filePath:{}", filePath);
@@ -67,7 +67,7 @@ public class FileUtils {
     public static List<String> fileContentList(String filePath) {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(Objects.requireNonNull(
-                        FileUtils.class.getClassLoader().getResourceAsStream(filePath))))) {
+                        FileUtil.class.getClassLoader().getResourceAsStream(filePath))))) {
             return reader.lines().toList();
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,6 +1,6 @@
 package com.english.baidutrans;
 
-import com.english.Utils.StringUtils;
+import com.english.util.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

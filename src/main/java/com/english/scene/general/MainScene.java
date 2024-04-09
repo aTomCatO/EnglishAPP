@@ -1,11 +1,11 @@
 package com.english.scene.general;
 
 import com.english.EnglishAppStart;
-import com.english.Utils.StringUtils;
 import com.english.entity.Corpus;
 import com.english.scene.AbstractScene;
 import com.english.scene.event.GameEventHandler;
 import com.english.scene.event.InputDataEventHandler;
+import com.english.util.StringUtil;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -16,7 +16,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ import java.util.List;
  * @author XYC
  * 主场景
  */
-@Data
+@Getter
+@Setter
 public class MainScene extends AbstractScene<Object> {
     private final TextField search = new TextField();
 
@@ -138,7 +140,7 @@ public class MainScene extends AbstractScene<Object> {
             @Override
             public void handle(MouseEvent event) {
                 String content = search.getText();
-                if (StringUtils.hasText(content)) {
+                if (StringUtil.hasText(content)) {
                     String zhRegex = "[\u4e00-\u9fa5]+";
                     String zhTextRegex = "[\u4e00-\u9fa5\\w\\pP]+";
                     String enRegex = "[a-zA-Z]+";

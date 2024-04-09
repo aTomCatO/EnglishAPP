@@ -17,7 +17,7 @@
     <!-- 日志文件大小 -->
     <property name="log.max.size" value="500MB"/>
     <!--    <property name="log.pattern" value="%level %yellow(%date{yyyy-MM-dd HH:mm:ss:SSS}) %green([%thread]) %logger{56}.%method:%L - %msg%n"/>-->
-    <property name="log.pattern" value="%date{mm:ss:SSS} %green([%thread]) %method:%L - %msg%n"/>
+    <property name="log.pattern" value="%level %date{mm:ss:SSS} %green([%thread]) %method:%L - %msg%n"/>
     <property name="log.charset" value="GBK"/>
 
     <!--控制台输出 -->

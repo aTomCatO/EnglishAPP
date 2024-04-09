@@ -1,7 +1,7 @@
 package com.english.scene.general.sentence;
 
 import com.english.Client;
-import com.english.Utils.StringUtils;
+import com.english.util.StringUtils;
 import com.english.netty.NettyService;
 import com.english.scene.AbstractScene;
 import javafx.concurrent.Task;

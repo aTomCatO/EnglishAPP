@@ -1,12 +1,12 @@
 package com.english.service;
 
-import com.english.Utils.FileUtils;
-import com.english.Utils.InstanceUtils;
-import com.english.Utils.StringUtils;
 import com.english.baidutrans.TransUtil;
 import com.english.entity.Corpus;
 import com.english.repository.CorpusDao;
 import com.english.repository.CorpusDaoImpl;
+import com.english.util.FileUtil;
+import com.english.util.InstanceUtil;
+import com.english.util.StringUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -56,7 +56,7 @@ public class CorpusServiceImpl implements CorpusService {
     public void saveByFile(String filePath) {
         String fileSuffix = "txt";
         Properties properties;
-        if (filePath.endsWith(fileSuffix) && (properties = FileUtils.load(filePath)) != null) {
+        if (filePath.endsWith(fileSuffix) && (properties = FileUtil.load(filePath)) != null) {
             Set<String> enSet = properties.stringPropertyNames();
             List<Corpus> corpusList = new ArrayList<>();
             String regex = "([\\w\\s\\pP]+)([\u4e00-\u9fa5\\w\\pP]+)";
@@ -79,7 +79,7 @@ public class CorpusServiceImpl implements CorpusService {
         Corpus corpus = null;
         try {
             String transResult = TransUtil.translate(sentence, from, to);
-            if (StringUtils.hasText(transResult)) {
+            if (StringUtil.hasText(transResult)) {
                 corpus = new Corpus();
                 Class<Corpus> aClass = Corpus.class;
                 Field f1 = aClass.getDeclaredField(from + "Text");
@@ -90,7 +90,7 @@ public class CorpusServiceImpl implements CorpusService {
                 f2.set(corpus, transResult);
             }
         } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
-            InstanceUtils.LOGGER.error(e.getMessage());
+            InstanceUtil.LOGGER.error(e.getMessage());
         }
         return corpus;
     }

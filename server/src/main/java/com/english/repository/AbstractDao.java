@@ -1,6 +1,6 @@
 package com.english.repository;
 
-import com.english.Utils.FileUtils;
+import com.english.util.FileUtils;
 import com.english.service.DictionaryServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
